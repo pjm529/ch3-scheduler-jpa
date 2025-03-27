@@ -2,14 +2,21 @@ package com.sparta.api.schedule.service.impl;
 
 import com.sparta.api.member.entity.Member;
 import com.sparta.api.member.repository.MemberRepository;
+import com.sparta.api.schedule.dto.ScheduleListDto;
 import com.sparta.api.schedule.dto.ScheduleReqDto;
 import com.sparta.api.schedule.dto.ScheduleResDto;
 import com.sparta.api.schedule.entity.Schedule;
 import com.sparta.api.schedule.repository.ScheduleRepository;
+import com.sparta.api.schedule.repository.specification.ScheduleSpecification;
 import com.sparta.api.schedule.service.ScheduleService;
 import com.sparta.common.component.CommonExceptionResultMessage;
+import com.sparta.common.component.CustomPageable;
+import com.sparta.common.component.PaginationResDto;
 import com.sparta.common.exception.CustomException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,11 +48,24 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     @Override
-    public List<ScheduleResDto> findAllSchedule() {
-        List<Schedule> resultList = scheduleRepository.findAllWithActiveMember(); // 일정 목록 조회
-        return resultList.stream()
-                .map(ScheduleResDto::new) // Response 로 mapping
+    public PaginationResDto<ScheduleListDto> findAllSchedule(CustomPageable customPageable) {
+        Pageable pageable = customPageable.getPageable();
+
+        Specification<Schedule> spec = ScheduleSpecification.buildSearchSpecification();
+
+        Page<Schedule> result = scheduleRepository.findAll(spec, pageable);
+
+        List<ScheduleListDto> resultList = result.stream()
+                .map(ScheduleListDto::new)
                 .collect(Collectors.toList());
+
+        return PaginationResDto.<ScheduleListDto>builder()
+                .data(resultList)
+                .total(result.getTotalElements())
+                .size(customPageable.getSize())
+                .page(customPageable.getPage())
+                .totalPages((result.getTotalElements() + customPageable.getSize() - 1) / customPageable.getSize())
+                .build();
     }
 
     @Override

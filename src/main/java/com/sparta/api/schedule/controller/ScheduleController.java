@@ -1,13 +1,12 @@
 package com.sparta.api.schedule.controller;
 
 import com.sparta.api.member.dto.MemberResDto;
+import com.sparta.api.schedule.dto.ScheduleListDto;
 import com.sparta.api.schedule.dto.ScheduleReqDto;
 import com.sparta.api.schedule.dto.ScheduleResDto;
 import com.sparta.api.schedule.service.ScheduleService;
 import com.sparta.common.annotation.ApiErrorCodeExamples;
-import com.sparta.common.component.BaseResponse;
-import com.sparta.common.component.CommonExceptionResultMessage;
-import com.sparta.common.component.SystemValues;
+import com.sparta.common.component.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -15,6 +14,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -49,8 +49,8 @@ public class ScheduleController {
             , CommonExceptionResultMessage.DB_FAIL
             , CommonExceptionResultMessage.FAIL
     })
-    public BaseResponse<List<ScheduleResDto>> findAllSchedule() {
-        return BaseResponse.from(scheduleService.findAllSchedule());
+    public BaseResponse<PaginationResDto<ScheduleListDto>> findAllSchedule(@ParameterObject @Valid CustomPageable customPageable) {
+        return BaseResponse.from(scheduleService.findAllSchedule(customPageable));
     }
 
     @GetMapping("/{id}")
