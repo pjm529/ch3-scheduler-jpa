@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/auth")
-@CrossOrigin("*")
 @Tag(name = "Auth API", description = "Auth 관련 API 모음.")
 public class AuthController {
 
