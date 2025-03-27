@@ -1,7 +1,8 @@
 package com.sparta.api.member.service.impl;
 
-import com.sparta.api.member.dto.MemberDelDto;
-import com.sparta.api.member.dto.MemberModDto;
+import com.sparta.api.member.dto.PasswordUpdateDto;
+import com.sparta.api.member.dto.MemberDeleteDto;
+import com.sparta.api.member.dto.MemberUpdateDto;
 import com.sparta.api.member.dto.MemberResDto;
 import com.sparta.api.member.entity.Member;
 import com.sparta.api.member.repository.MemberRepository;
@@ -9,6 +10,7 @@ import com.sparta.api.member.service.MemberService;
 import com.sparta.common.component.CommonExceptionResultMessage;
 import com.sparta.common.exception.CustomException;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,7 +23,7 @@ public class MemberServiceImpl implements MemberService {
     private final MemberRepository memberRepository;
 
     @Override
-    public MemberResDto updateMember(MemberModDto dto, Long memberId) {
+    public MemberResDto updateMember(MemberUpdateDto dto, Long memberId) {
         Member member = this.getMember(memberId); // Member 조회
         member.update(dto.getName()); // update
         memberRepository.save(member); // 멤버 수정
@@ -29,9 +31,28 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public void deleteMember(MemberDelDto dto, Long memberId) {
+    public void deleteMember(MemberDeleteDto dto, Long memberId) {
         Member member = this.getMember(memberId); // Member 조회
         memberRepository.delete(member); // Member 삭제
+    }
+
+    @Override
+    public void updatePassword(PasswordUpdateDto dto, Long memberId) {
+        String newPw = dto.getNewPw();
+        String currentPw = dto.getCurrentPw();
+
+        Member member = this.getMember(memberId); // Member 조회
+
+        if (!StringUtils.equals(currentPw, member.getPassword())) { // 비밀번호 검증
+            throw new CustomException(CommonExceptionResultMessage.PW_MISMATCH);
+        }
+
+        if (StringUtils.equals(newPw, currentPw)) {
+            throw new CustomException(CommonExceptionResultMessage.VALID_FAIL, "현재 사용 중인 비밀번호입니다.");
+        }
+
+        member.updatePw(newPw);
+        memberRepository.save(member);
     }
 
     private Member getMember(Long memberId) {

@@ -1,7 +1,8 @@
 package com.sparta.api.member.controller;
 
-import com.sparta.api.member.dto.MemberDelDto;
-import com.sparta.api.member.dto.MemberModDto;
+import com.sparta.api.member.dto.PasswordUpdateDto;
+import com.sparta.api.member.dto.MemberDeleteDto;
+import com.sparta.api.member.dto.MemberUpdateDto;
 import com.sparta.api.member.dto.MemberResDto;
 import com.sparta.api.member.service.MemberService;
 import com.sparta.common.annotation.ApiErrorCodeExamples;
@@ -46,7 +47,7 @@ public class MemberController {
             , CommonExceptionResultMessage.DB_FAIL
             , CommonExceptionResultMessage.FAIL
     })
-    public BaseResponse<MemberResDto> updateMember(@RequestBody @Valid MemberModDto dto, HttpServletRequest request) {
+    public BaseResponse<MemberResDto> updateMember(@RequestBody @Valid MemberUpdateDto dto, HttpServletRequest request) {
         HttpSession session = request.getSession();
         MemberResDto sessionMember = (MemberResDto) session.getAttribute(SystemValues.LOGIN_USER.getValue());
         MemberResDto updatedMember = memberService.updateMember(dto, sessionMember.getId()); // 정보 수정
@@ -64,11 +65,26 @@ public class MemberController {
             , CommonExceptionResultMessage.DB_FAIL
             , CommonExceptionResultMessage.FAIL
     })
-    public BaseResponse<Boolean> deleteMember(@RequestBody @Valid MemberDelDto dto, HttpServletRequest request) {
+    public BaseResponse<Boolean> deleteMember(@RequestBody @Valid MemberDeleteDto dto, HttpServletRequest request) {
         HttpSession session = request.getSession();
         MemberResDto sessionMember = (MemberResDto) session.getAttribute(SystemValues.LOGIN_USER.getValue());
         memberService.deleteMember(dto, sessionMember.getId()); // 삭제
         session.invalidate(); // 해당 세션(데이터)을 삭제한다.
+        return BaseResponse.from(true);
+    }
+
+    @PutMapping("/me/password")
+    @Operation(summary = "비밀번호 수정")
+    @ApiErrorCodeExamples({CommonExceptionResultMessage.VALID_FAIL
+            , CommonExceptionResultMessage.AUTHENTICATION_FAILED
+            , CommonExceptionResultMessage.DB_FAIL
+            , CommonExceptionResultMessage.NOT_FOUND
+            , CommonExceptionResultMessage.PW_MISMATCH
+    })
+    public BaseResponse<Boolean> updatePassword(@RequestBody @Valid PasswordUpdateDto dto, HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        MemberResDto sessionMember = (MemberResDto) session.getAttribute(SystemValues.LOGIN_USER.getValue());
+        memberService.updatePassword(dto, sessionMember.getId());
         return BaseResponse.from(true);
     }
 }
