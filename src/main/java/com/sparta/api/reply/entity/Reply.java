@@ -32,4 +32,17 @@ public class Reply extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     private Member member; // 댓글 작성자 정보
+
+    @Column(nullable = false)
+    private Boolean deleted;
+
+    public Reply() {
+    }
+
+    public Reply(String contents, Schedule schedule, Member member) {
+        this.contents = contents;
+        this.schedule = schedule;
+        this.member = member;
+        this.deleted = false;
+    }
 }
