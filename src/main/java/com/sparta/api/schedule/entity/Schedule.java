@@ -38,7 +38,7 @@ public class Schedule extends BaseTimeEntity {
     private final List<Reply> replyList = new ArrayList<>();
 
     @Column(nullable = false)
-    private Boolean deleted = false;
+    private Boolean deleted;
 
     public Schedule() {
     }
@@ -47,6 +47,7 @@ public class Schedule extends BaseTimeEntity {
         this.title = title;
         this.contents = contents;
         this.member = member;
+        this.deleted = false;
     }
 
     public void update(String title, String contents) {
