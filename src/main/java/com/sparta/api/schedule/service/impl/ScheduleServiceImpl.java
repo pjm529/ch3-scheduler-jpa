@@ -49,22 +49,22 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     @Override
     public PaginationResDto<ScheduleListDto> findAllSchedule(CustomPageable customPageable) {
-        Pageable pageable = customPageable.getPageable();
+        Pageable pageable = customPageable.getPageable(); // page 생성
 
-        Specification<Schedule> spec = ScheduleSpecification.buildSearchSpecification();
+        Specification<Schedule> spec = ScheduleSpecification.buildSearchSpecification(); //  ScheduleSpec 생성
 
-        Page<Schedule> result = scheduleRepository.findAll(spec, pageable);
+        Page<Schedule> result = scheduleRepository.findAll(spec, pageable); // 목록 조회
 
         List<ScheduleListDto> resultList = result.stream()
                 .map(ScheduleListDto::new)
                 .collect(Collectors.toList());
 
         return PaginationResDto.<ScheduleListDto>builder()
-                .data(resultList)
-                .total(result.getTotalElements())
-                .size(customPageable.getSize())
-                .page(customPageable.getPage())
-                .totalPages((result.getTotalElements() + customPageable.getSize() - 1) / customPageable.getSize())
+                .data(resultList) // data
+                .total(result.getTotalElements()) // 총 데이터 수
+                .size(customPageable.getSize()) // 페이지 표시 수
+                .page(customPageable.getPage()) // 페이지
+                .totalPages((result.getTotalElements() + customPageable.getSize() - 1) / customPageable.getSize()) // 총 페이지 수
                 .build();
     }
 
@@ -96,7 +96,7 @@ public class ScheduleServiceImpl implements ScheduleService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new CustomException(CommonExceptionResultMessage.NOT_FOUND, "회원 조회 실패: ID " + memberId + " 에 해당하는 회원 없음")); // 조회 실패시 throw
 
-        Schedule schedule = this.getSchedule(id);
+        Schedule schedule = this.getSchedule(id); // 일정 조회
 
         if (!memberId.equals(schedule.getMember().getId())) { // 회원 검증
             throw new CustomException(CommonExceptionResultMessage.ACCESS_DENIED);

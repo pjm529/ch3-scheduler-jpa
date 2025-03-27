@@ -27,21 +27,21 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public MemberResDto login(LoginDto dto) {
-        Member member = memberRepository.findByEmail(dto.getEmail())
-                .orElseThrow(() -> new CustomException(CommonExceptionResultMessage.LOGIN_FAILED));
+        Member member = memberRepository.findByEmail(dto.getEmail()) // email로 Member 조회
+                .orElseThrow(() -> new CustomException(CommonExceptionResultMessage.LOGIN_FAILED)); // 없을 경우 throw
 
-        if (!passwordEncoder.matches(dto.getPassword(), member.getPassword())) {
-            throw new CustomException(CommonExceptionResultMessage.LOGIN_FAILED);
+        if (!passwordEncoder.matches(dto.getPassword(), member.getPassword())) { // 비밀번호 검증
+            throw new CustomException(CommonExceptionResultMessage.LOGIN_FAILED); // 비밀번호 검증 실패 시 throw
         }
 
-        return new MemberResDto(member);
+        return new MemberResDto(member); // MemberResDto 로 반환
     }
 
     @Override
     public MemberResDto signUp(MemberReqDto dto) {
         String email = dto.getEmail();
 
-        Optional<Member> memberOpt = memberRepository.findByEmail(email);
+        Optional<Member> memberOpt = memberRepository.findByEmail(email); // 이메일 존재 여부 조회
         if (memberOpt.isPresent()) {
             throw new CustomException(CommonExceptionResultMessage.DUPLICATE_FAIL, "이미 사용 중인 이메일입니다.");
         }
