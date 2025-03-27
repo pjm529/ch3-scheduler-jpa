@@ -2,10 +2,14 @@ package com.sparta.api.schedule.entity;
 
 import com.sparta.api.common.entity.BaseTimeEntity;
 import com.sparta.api.member.entity.Member;
+import com.sparta.api.reply.entity.Reply;
 import jakarta.persistence.*;
 import lombok.Getter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -29,6 +33,9 @@ public class Schedule extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
+
+    @OneToMany(mappedBy = "schedule")
+    private final List<Reply> replyList = new ArrayList<>();
 
     @Column(nullable = false)
     private Boolean deleted = false;
