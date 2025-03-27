@@ -11,6 +11,8 @@ import lombok.NoArgsConstructor;
 import org.springframework.dao.DataAccessException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
+import java.time.LocalDateTime;
+
 import static com.sparta.common.component.CommonExceptionResultMessage.*;
 import static com.sparta.common.component.CommonExceptionResultMessage.VALID_FAIL;
 
@@ -34,11 +36,15 @@ public class JSONResult {
 	@Schema(description = "응답 메시지", example = "요청 처리 성공")
 	private String message;
 
+	@Schema(description = "시간", example = "yyyy-MM-dd HH:mm:ss")
+	private LocalDateTime timestamp;
+
 	public static JSONResult successBuilder() {
 		return JSONResult.builder()
 				.status(SUCCESS.getStatus().value())
 				.code(SUCCESS.getCode())
 				.message(SUCCESS.getMessage())
+				.timestamp(LocalDateTime.now())
 				.build();
 	}
 
@@ -47,6 +53,7 @@ public class JSONResult {
 				.status(FAIL.getStatus().value())
 				.code(FAIL.getCode())
 				.message(FAIL.getMessage())
+				.timestamp(LocalDateTime.now())
 				.build();
 	}
 
@@ -55,6 +62,7 @@ public class JSONResult {
             .status(e.getResultMessage().getStatus().value())
             .code(e.getResultMessage().getCode())
             .message(message)
+			.timestamp(LocalDateTime.now())
             .build();
     }
 
@@ -64,6 +72,7 @@ public class JSONResult {
 				.status(DB_FAIL.getStatus().value())
 				.code(DB_FAIL.getCode())
 				.message(DB_FAIL.getMessage())
+				.timestamp(LocalDateTime.now())
 				.build();
 	}
 
@@ -72,6 +81,7 @@ public class JSONResult {
 				.status(NOT_FOUND.getStatus().value())
 				.code(NOT_FOUND.getCode())
 				.message(NOT_FOUND.getMessage())
+				.timestamp(LocalDateTime.now())
 				.build();
 	}
 
@@ -80,6 +90,7 @@ public class JSONResult {
 				.status(VALID_FAIL.getStatus().value())
 				.code(VALID_FAIL.getCode())
 				.message(message)
+				.timestamp(LocalDateTime.now())
 				.build();
 	}
 }

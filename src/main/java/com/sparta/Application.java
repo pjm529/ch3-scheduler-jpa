@@ -20,6 +20,7 @@ import java.util.TimeZone;
         value = {"classpath:config/application.yml", "classpath:config/${spring.profiles.active:local}/application.yml"} ,
         factory = YamlPropertySourceFactory.class
 )
+@EnableJpaAuditing
 public class Application {
 
     static {
