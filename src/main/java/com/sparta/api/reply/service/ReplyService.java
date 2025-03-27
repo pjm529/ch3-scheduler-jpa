@@ -10,4 +10,6 @@ public interface ReplyService {
     ReplyResDto findReplyById(Long id);
 
     ReplyResDto updateReply(Long id, ReplyUpdateDto dto, Long memberId);
+
+    void deleteReply(Long id, Long memberId);
 }

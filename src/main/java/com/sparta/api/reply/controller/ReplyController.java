@@ -67,4 +67,19 @@ public class ReplyController {
 
         return BaseResponse.from(replyService.updateReply(id, dto, sessionMember.getId()));
     }
+
+    @DeleteMapping("/{id}")
+    @Operation(summary = "댓글 삭제 API")
+    @ApiErrorCodeExamples({CommonExceptionResultMessage.NOT_FOUND
+            , CommonExceptionResultMessage.ACCESS_DENIED
+            , CommonExceptionResultMessage.AUTHENTICATION_FAILED
+            , CommonExceptionResultMessage.DB_FAIL
+            , CommonExceptionResultMessage.FAIL
+    })
+    public BaseResponse<Boolean> deleteReply(@Schema(description = "댓글 PK") @PathVariable Long id, HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        MemberResDto sessionMember = (MemberResDto) session.getAttribute(SystemValues.LOGIN_USER.getValue()); // sessionMember
+        replyService.deleteReply(id, sessionMember.getId());
+        return BaseResponse.from(true);
+    }
 }
