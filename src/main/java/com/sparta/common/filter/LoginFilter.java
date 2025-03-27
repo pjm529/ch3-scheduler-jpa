@@ -78,7 +78,7 @@ public class LoginFilter implements Filter {
 
         // BaseResponse 및 JSONResult 객체 구성
         BaseResponse res = new BaseResponse();
-        res.setJsonResult(JSONResult.unAuthentication());
+        res.setJsonResult(JSONResult.failure(CommonExceptionResultMessage.AUTHENTICATION_FAILED, ""));
 
         String responseBody = objectMapper.writeValueAsString(res);
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
