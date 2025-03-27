@@ -8,6 +8,7 @@ import lombok.Getter;
 @Getter
 @Table
 public class Schedule extends BaseTimeEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -23,4 +24,13 @@ public class Schedule extends BaseTimeEntity {
 
     @Column(nullable = false)
     private Boolean deleted = false;
+
+    public Schedule() {
+    }
+
+    public Schedule(String title, String contents, String regNm) {
+        this.title = title;
+        this.contents = contents;
+        this.regNm = regNm;
+    }
 }
