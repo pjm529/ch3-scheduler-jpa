@@ -44,7 +44,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     @Override
     public List<ScheduleResDto> findAllSchedule() {
-        List<Schedule> resultList = scheduleRepository.findAll(); // 일정 목록 조회
+        List<Schedule> resultList = scheduleRepository.findAllWithActiveMember(); // 일정 목록 조회
         return resultList.stream()
                 .map(ScheduleResDto::new) // Response 로 mapping
                 .collect(Collectors.toList());
@@ -70,7 +70,7 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     private Schedule getSchedule(Long id) {
-        return scheduleRepository.findById(id)
+        return scheduleRepository.findByIdWithActiveMember(id)
                 .orElseThrow(() -> new CustomException(CommonExceptionResultMessage.NOT_FOUND, "일정 조회 실패: ID " + id + " 에 해당하는 일정 없음")); // 조회 실패시 throw
     }
 
