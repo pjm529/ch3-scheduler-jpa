@@ -3,10 +3,14 @@ package com.sparta.api.schedule.entity;
 import com.sparta.api.common.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 @Entity
 @Getter
 @Table
+@SQLDelete(sql = "update schedule set deleted = true where id = ?")
+@SQLRestriction("deleted = false")
 public class Schedule extends BaseTimeEntity {
 
     @Id

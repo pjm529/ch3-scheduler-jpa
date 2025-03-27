@@ -66,4 +66,15 @@ public class ScheduleController {
             @RequestBody @Valid ScheduleReqDto dto) {
         return BaseResponse.from(scheduleService.updateSchedule(id, dto));
     }
+
+    @DeleteMapping("/{id}")
+    @Operation(summary = "일정 삭제 API", description = "일정 삭제하기 위한 API")
+    @ApiErrorCodeExamples({CommonExceptionResultMessage.NOT_FOUND
+            , CommonExceptionResultMessage.DB_FAIL
+            , CommonExceptionResultMessage.FAIL
+    })
+    public BaseResponse<Boolean> deleteSchedule(@Schema(description = "일정 PK") @PathVariable Long id) {
+        scheduleService.deleteSchedule(id);
+        return BaseResponse.from(true);
+    }
 }

@@ -55,6 +55,12 @@ public class ScheduleServiceImpl implements ScheduleService {
         return new ScheduleResDto(schedule);
     }
 
+    @Override
+    public void deleteSchedule(Long id) {
+        Schedule schedule = this.getSchedule(id);
+        scheduleRepository.delete(schedule);
+    }
+
     private Schedule getSchedule(Long id) {
         return scheduleRepository.findById(id)
                 .orElseThrow(() -> new CustomException(CommonExceptionResultMessage.NOT_FOUND, "일정 조회 실패: ID " + id + " 에 해당하는 일정 없음")); // 조회 실패시 throw
