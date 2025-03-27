@@ -1,6 +1,7 @@
 package com.sparta.api.auth.service.impl;
 
 import com.sparta.api.auth.dto.LoginDto;
+import com.sparta.api.auth.dto.MemberReqDto;
 import com.sparta.api.auth.service.AuthService;
 import com.sparta.api.member.dto.MemberResDto;
 import com.sparta.api.member.entity.Member;
@@ -14,6 +15,8 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Service("authService")
 @RequiredArgsConstructor
@@ -35,5 +38,24 @@ public class AuthServiceImpl implements AuthService {
 
         // Session에 로그인 회원 정보를 저장한다.
         session.setAttribute(SystemValues.LOGIN_USER.getValue(), new MemberResDto(member));
+    }
+
+    @Override
+    public MemberResDto signUp(MemberReqDto dto) {
+        String email = dto.getEmail();
+
+        Optional<Member> memberOpt = memberRepository.findByEmail(email);
+        if (memberOpt.isPresent()) {
+            throw new CustomException(CommonExceptionResultMessage.DUPLICATE_FAIL, "이미 사용 중인 이메일입니다.");
+        }
+
+        Member member = new Member(dto.getName(), email, dto.getPassword());
+        memberRepository.save(member);
+
+        if (member.getId() == null) {
+            throw new CustomException(CommonExceptionResultMessage.DB_FAIL, "회원 등록에 실패했습니다.");
+        }
+
+        return new MemberResDto(member);
     }
 }

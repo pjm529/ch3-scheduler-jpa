@@ -2,7 +2,6 @@ package com.sparta.api.member.controller;
 
 import com.sparta.api.member.dto.MemberDelDto;
 import com.sparta.api.member.dto.MemberModDto;
-import com.sparta.api.member.dto.MemberReqDto;
 import com.sparta.api.member.dto.MemberResDto;
 import com.sparta.api.member.service.MemberService;
 import com.sparta.common.annotation.ApiErrorCodeExamples;
@@ -23,17 +22,6 @@ import org.springframework.web.bind.annotation.*;
 public class MemberController {
 
     private final MemberService memberService;
-
-    @PostMapping
-    @Operation(summary = "회원 등록 API", description = "회원 등록하기 위한 API")
-    @ApiErrorCodeExamples({CommonExceptionResultMessage.VALID_FAIL
-            , CommonExceptionResultMessage.DUPLICATE_FAIL
-            , CommonExceptionResultMessage.DB_FAIL
-            , CommonExceptionResultMessage.FAIL
-    })
-    public BaseResponse<MemberResDto> saveMember(@RequestBody @Valid MemberReqDto dto) {
-        return BaseResponse.from(memberService.saveMember(dto));
-    }
 
     @GetMapping("/{id}")
     @Operation(summary = "회원 상세 조회 API", description = "회원 상세 조회하기 위한 API")
