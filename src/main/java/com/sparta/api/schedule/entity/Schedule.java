@@ -24,7 +24,7 @@ public class Schedule extends BaseTimeEntity {
     @Column(nullable = false)
     private String title; // 할일 제목
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 1024)
     private String contents; // 할일 내용
 
     @ManyToOne(fetch = FetchType.LAZY)

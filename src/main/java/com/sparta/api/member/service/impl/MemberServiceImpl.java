@@ -1,7 +1,6 @@
 package com.sparta.api.member.service.impl;
 
 import com.sparta.api.member.dto.PasswordUpdateDto;
-import com.sparta.api.member.dto.MemberDeleteDto;
 import com.sparta.api.member.dto.MemberUpdateDto;
 import com.sparta.api.member.dto.MemberResDto;
 import com.sparta.api.member.entity.Member;
@@ -31,7 +30,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public void deleteMember(MemberDeleteDto dto, Long memberId) {
+    public void deleteMember(Long memberId) {
         Member member = this.getMember(memberId); // Member 조회
         memberRepository.delete(member); // Member 삭제
     }
