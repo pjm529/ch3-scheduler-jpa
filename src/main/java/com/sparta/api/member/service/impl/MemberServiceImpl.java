@@ -1,8 +1,8 @@
 package com.sparta.api.member.service.impl;
 
-import com.sparta.api.member.dto.MemberDelDto;
-import com.sparta.api.member.dto.MemberModDto;
-import com.sparta.api.member.dto.MemberReqDto;
+import com.sparta.api.member.dto.PasswordUpdateDto;
+import com.sparta.api.member.dto.MemberDeleteDto;
+import com.sparta.api.member.dto.MemberUpdateDto;
 import com.sparta.api.member.dto.MemberResDto;
 import com.sparta.api.member.entity.Member;
 import com.sparta.api.member.repository.MemberRepository;
@@ -10,10 +10,10 @@ import com.sparta.api.member.service.MemberService;
 import com.sparta.common.component.CommonExceptionResultMessage;
 import com.sparta.common.exception.CustomException;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
 
 @Service("memberService")
 @RequiredArgsConstructor
@@ -23,51 +23,40 @@ public class MemberServiceImpl implements MemberService {
     private final MemberRepository memberRepository;
 
     @Override
-    public MemberResDto saveMember(MemberReqDto dto) {
-        String email = dto.getEmail();
-
-        Optional<Member> memberOpt = memberRepository.findByEmail(email);
-        if (memberOpt.isPresent()) {
-            throw new CustomException(CommonExceptionResultMessage.DUPLICATE_FAIL, "이미 사용 중인 이메일입니다.");
-        }
-
-        Member member = new Member(dto.getName(), email, dto.getPassword());
-        memberRepository.save(member);
-
-        if (member.getId() == null) {
-            throw new CustomException(CommonExceptionResultMessage.DB_FAIL, "회원 등록에 실패했습니다.");
-        }
-
+    public MemberResDto updateMember(MemberUpdateDto dto, Long memberId) {
+        Member member = this.getMember(memberId); // Member 조회
+        member.update(dto.getName()); // update
+        memberRepository.save(member); // 멤버 수정
         return new MemberResDto(member);
     }
 
     @Override
-    public MemberResDto findMemberById(Long id) {
-        return new MemberResDto(this.getMember(id));
+    public void deleteMember(MemberDeleteDto dto, Long memberId) {
+        Member member = this.getMember(memberId); // Member 조회
+        memberRepository.delete(member); // Member 삭제
     }
 
     @Override
-    public MemberResDto updateMember(Long id, MemberModDto dto) {
-        Member member = this.getMember(id);
-        if (!member.getPassword().equals(dto.getPassword())) {
+    public void updatePassword(PasswordUpdateDto dto, Long memberId) {
+        String newPw = dto.getNewPw();
+        String currentPw = dto.getCurrentPw();
+
+        Member member = this.getMember(memberId); // Member 조회
+
+        if (!StringUtils.equals(currentPw, member.getPassword())) { // 비밀번호 검증
             throw new CustomException(CommonExceptionResultMessage.PW_MISMATCH);
         }
-        member.update(dto.getName());
+
+        if (StringUtils.equals(newPw, currentPw)) {
+            throw new CustomException(CommonExceptionResultMessage.VALID_FAIL, "현재 사용 중인 비밀번호입니다.");
+        }
+
+        member.updatePw(newPw);
         memberRepository.save(member);
-        return new MemberResDto(member);
     }
 
-    @Override
-    public void deleteMember(Long id, MemberDelDto dto) {
-        Member member = this.getMember(id);
-        if (!member.getPassword().equals(dto.getPassword())) {
-            throw new CustomException(CommonExceptionResultMessage.PW_MISMATCH);
-        }
-        memberRepository.delete(member);
-    }
-
-    private Member getMember(Long id) {
-        return memberRepository.findById(id)
-                .orElseThrow(() -> new CustomException(CommonExceptionResultMessage.NOT_FOUND, "회원 조회 실패: ID " + id + " 에 해당하는 회원 없음")); // 조회 실패시 throw
+    private Member getMember(Long memberId) {
+        return memberRepository.findById(memberId)
+                .orElseThrow(() -> new CustomException(CommonExceptionResultMessage.NOT_FOUND, "회원 조회 실패: ID " + memberId + " 에 해당하는 회원 없음")); // 조회 실패시 throw
     }
 }

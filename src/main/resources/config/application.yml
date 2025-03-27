@@ -12,7 +12,7 @@ server:
       enabled: true
       force: true
     session:
-#      timeout: 1800
+      timeout: 1800
       tracking-modes: cookie
 
   forward-headers-strategy: framework

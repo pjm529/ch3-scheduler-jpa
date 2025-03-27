@@ -93,4 +93,13 @@ public class JSONResult {
 				.timestamp(LocalDateTime.now())
 				.build();
 	}
+
+	public static JSONResult unAuthentication() {
+		return JSONResult.builder()
+				.status(AUTHENTICATION_FAILED.getStatus().value())
+				.code(AUTHENTICATION_FAILED.getCode())
+				.message(AUTHENTICATION_FAILED.getMessage())
+				.timestamp(LocalDateTime.now())
+				.build();
+	}
 }
