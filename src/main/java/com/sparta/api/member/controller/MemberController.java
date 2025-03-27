@@ -7,9 +7,11 @@ import com.sparta.api.member.service.MemberService;
 import com.sparta.common.annotation.ApiErrorCodeExamples;
 import com.sparta.common.component.BaseResponse;
 import com.sparta.common.component.CommonExceptionResultMessage;
+import com.sparta.common.component.SystemValues;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -31,7 +33,9 @@ public class MemberController {
             , CommonExceptionResultMessage.FAIL
     })
     public BaseResponse<MemberResDto> getMyInfo(HttpServletRequest request) {
-        return BaseResponse.from(memberService.getMyInfo(request));
+        HttpSession session = request.getSession();
+        MemberResDto sessionMember = (MemberResDto) session.getAttribute(SystemValues.LOGIN_USER.getValue());
+        return BaseResponse.from(sessionMember);
     }
 
     @PutMapping("/me")
@@ -43,7 +47,13 @@ public class MemberController {
             , CommonExceptionResultMessage.FAIL
     })
     public BaseResponse<MemberResDto> updateMember(@RequestBody @Valid MemberModDto dto, HttpServletRequest request) {
-        return BaseResponse.from(memberService.updateMember(dto, request));
+        HttpSession session = request.getSession();
+        MemberResDto sessionMember = (MemberResDto) session.getAttribute(SystemValues.LOGIN_USER.getValue());
+        MemberResDto updatedMember = memberService.updateMember(dto, sessionMember.getId()); // 정보 수정
+
+        // 세션 무효화 없이 기존 세션에 속성 값만 업데이트
+        session.setAttribute(SystemValues.LOGIN_USER.getValue(), updatedMember);
+        return BaseResponse.from(updatedMember);
     }
 
     @DeleteMapping("/me")
@@ -55,7 +65,10 @@ public class MemberController {
             , CommonExceptionResultMessage.FAIL
     })
     public BaseResponse<Boolean> deleteMember(@RequestBody @Valid MemberDelDto dto, HttpServletRequest request) {
-        memberService.deleteMember(dto, request);
+        HttpSession session = request.getSession();
+        MemberResDto sessionMember = (MemberResDto) session.getAttribute(SystemValues.LOGIN_USER.getValue());
+        memberService.deleteMember(dto, sessionMember.getId()); // 삭제
+        session.invalidate(); // 해당 세션(데이터)을 삭제한다.
         return BaseResponse.from(true);
     }
 }

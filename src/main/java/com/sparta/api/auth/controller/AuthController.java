@@ -8,6 +8,7 @@ import com.sparta.common.annotation.ApiErrorCodeExample;
 import com.sparta.common.annotation.ApiErrorCodeExamples;
 import com.sparta.common.component.BaseResponse;
 import com.sparta.common.component.CommonExceptionResultMessage;
+import com.sparta.common.component.SystemValues;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
@@ -33,7 +34,12 @@ public class AuthController {
             , CommonExceptionResultMessage.FAIL
     })
     public BaseResponse<Boolean> login(@RequestBody @Valid LoginDto dto, HttpServletRequest request) {
-        authService.login(dto, request);
+        MemberResDto memberResDto = authService.login(dto);
+
+        HttpSession session = request.getSession(); // Session 을 가져온다.
+
+        // Session 에 로그인 회원 정보를 저장한다.
+        session.setAttribute(SystemValues.LOGIN_USER.getValue(), memberResDto);
         return BaseResponse.from(true);
     }
 
@@ -52,7 +58,10 @@ public class AuthController {
     @Operation(summary = "로그아웃 API", description = "로그아웃 API")
     @ApiErrorCodeExample(CommonExceptionResultMessage.FAIL)
     public BaseResponse<Boolean> logout(HttpServletRequest request) {
-        authService.logout(request);
+        HttpSession session = request.getSession(false); // 미 로그인 시 null 반환
+        if (session != null) {
+            session.invalidate(); // 해당 세션(데이터)을 삭제한다.
+        }
         return BaseResponse.from(true);
     }
 }

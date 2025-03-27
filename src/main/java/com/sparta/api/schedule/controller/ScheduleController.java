@@ -1,15 +1,18 @@
 package com.sparta.api.schedule.controller;
 
+import com.sparta.api.member.dto.MemberResDto;
 import com.sparta.api.schedule.dto.ScheduleReqDto;
 import com.sparta.api.schedule.dto.ScheduleResDto;
 import com.sparta.api.schedule.service.ScheduleService;
 import com.sparta.common.annotation.ApiErrorCodeExamples;
 import com.sparta.common.component.BaseResponse;
 import com.sparta.common.component.CommonExceptionResultMessage;
+import com.sparta.common.component.SystemValues;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -33,7 +36,10 @@ public class ScheduleController {
             , CommonExceptionResultMessage.FAIL
     })
     public BaseResponse<ScheduleResDto> saveSchedule(@RequestBody @Valid ScheduleReqDto dto, HttpServletRequest request) {
-        return BaseResponse.from(scheduleService.saveSchedule(dto, request));
+        HttpSession session = request.getSession();
+        MemberResDto sessionMember = (MemberResDto) session.getAttribute(SystemValues.LOGIN_USER.getValue()); // sessionMember
+
+        return BaseResponse.from(scheduleService.saveSchedule(dto, sessionMember.getId()));
     }
 
     @GetMapping
@@ -67,10 +73,12 @@ public class ScheduleController {
             , CommonExceptionResultMessage.DB_FAIL
             , CommonExceptionResultMessage.FAIL
     })
-    public BaseResponse<ScheduleResDto> updateSchedule(
-            @Schema(description = "일정 PK") @PathVariable Long id,
-            @RequestBody @Valid ScheduleReqDto dto, HttpServletRequest request) {
-        return BaseResponse.from(scheduleService.updateSchedule(id, dto, request));
+    public BaseResponse<ScheduleResDto> updateSchedule(@Schema(description = "일정 PK") @PathVariable Long id,
+                                                       @RequestBody @Valid ScheduleReqDto dto, HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        MemberResDto sessionMember = (MemberResDto) session.getAttribute(SystemValues.LOGIN_USER.getValue()); // sessionMember
+
+        return BaseResponse.from(scheduleService.updateSchedule(id, dto, sessionMember.getId()));
     }
 
     @DeleteMapping("/{id}")
@@ -82,7 +90,9 @@ public class ScheduleController {
             , CommonExceptionResultMessage.FAIL
     })
     public BaseResponse<Boolean> deleteSchedule(@Schema(description = "일정 PK") @PathVariable Long id, HttpServletRequest request) {
-        scheduleService.deleteSchedule(id, request);
+        HttpSession session = request.getSession();
+        MemberResDto sessionMember = (MemberResDto) session.getAttribute(SystemValues.LOGIN_USER.getValue()); // sessionMember
+        scheduleService.deleteSchedule(id, sessionMember.getId());
         return BaseResponse.from(true);
     }
 }

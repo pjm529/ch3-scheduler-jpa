@@ -1,6 +1,5 @@
 package com.sparta.api.schedule.service.impl;
 
-import com.sparta.api.member.dto.MemberResDto;
 import com.sparta.api.member.entity.Member;
 import com.sparta.api.member.repository.MemberRepository;
 import com.sparta.api.schedule.dto.ScheduleReqDto;
@@ -9,10 +8,7 @@ import com.sparta.api.schedule.entity.Schedule;
 import com.sparta.api.schedule.repository.ScheduleRepository;
 import com.sparta.api.schedule.service.ScheduleService;
 import com.sparta.common.component.CommonExceptionResultMessage;
-import com.sparta.common.component.SystemValues;
 import com.sparta.common.exception.CustomException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,11 +26,7 @@ public class ScheduleServiceImpl implements ScheduleService {
     private final MemberRepository memberRepository;
 
     @Override
-    public ScheduleResDto saveSchedule(ScheduleReqDto dto, HttpServletRequest request) {
-        HttpSession session = request.getSession();
-        MemberResDto memberResDto = (MemberResDto) session.getAttribute(SystemValues.LOGIN_USER.getValue());
-
-        Long memberId = memberResDto.getId();
+    public ScheduleResDto saveSchedule(ScheduleReqDto dto, Long memberId) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new CustomException(CommonExceptionResultMessage.NOT_FOUND, "회원 조회 실패: ID " + memberId + " 에 해당하는 회원 없음")); // 조회 실패시 throw
 
@@ -62,16 +54,16 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     @Override
-    public ScheduleResDto updateSchedule(Long id, ScheduleReqDto dto, HttpServletRequest request) {
-        Schedule schedule = this.validMember(id, request);
+    public ScheduleResDto updateSchedule(Long id, ScheduleReqDto dto, Long memberId) {
+        Schedule schedule = this.validMember(id, memberId);
         schedule.update(dto.getTitle(), dto.getContents()); // 정보 update
         scheduleRepository.save(schedule); // 저장
         return new ScheduleResDto(schedule);
     }
 
     @Override
-    public void deleteSchedule(Long id, HttpServletRequest request) {
-        Schedule schedule = this.validMember(id, request);
+    public void deleteSchedule(Long id, Long memberId) {
+        Schedule schedule = this.validMember(id, memberId);
         scheduleRepository.delete(schedule);
     }
 
@@ -80,17 +72,13 @@ public class ScheduleServiceImpl implements ScheduleService {
                 .orElseThrow(() -> new CustomException(CommonExceptionResultMessage.NOT_FOUND, "일정 조회 실패: ID " + id + " 에 해당하는 일정 없음")); // 조회 실패시 throw
     }
 
-    private Schedule validMember(Long id, HttpServletRequest request) {
-        HttpSession session = request.getSession();
-        MemberResDto memberResDto = (MemberResDto) session.getAttribute(SystemValues.LOGIN_USER.getValue());
-
-        Long memberId = memberResDto.getId();
+    private Schedule validMember(Long id, Long memberId) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new CustomException(CommonExceptionResultMessage.NOT_FOUND, "회원 조회 실패: ID " + memberId + " 에 해당하는 회원 없음")); // 조회 실패시 throw
 
         Schedule schedule = this.getSchedule(id);
 
-        if (!memberId.equals(schedule.getId())) { // 회원 검증
+        if (!memberId.equals(schedule.getMember().getId())) { // 회원 검증
             throw new CustomException(CommonExceptionResultMessage.ACCESS_DENIED);
         }
 
