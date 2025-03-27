@@ -9,4 +9,7 @@ public interface AuthService {
     void login(LoginDto dto, HttpServletRequest request);
 
     MemberResDto signUp(MemberReqDto dto);
+
+    void logout(HttpServletRequest request);
+
 }

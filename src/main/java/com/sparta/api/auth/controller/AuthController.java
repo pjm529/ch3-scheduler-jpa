@@ -4,12 +4,14 @@ import com.sparta.api.auth.dto.LoginDto;
 import com.sparta.api.auth.service.AuthService;
 import com.sparta.api.auth.dto.MemberReqDto;
 import com.sparta.api.member.dto.MemberResDto;
+import com.sparta.common.annotation.ApiErrorCodeExample;
 import com.sparta.common.annotation.ApiErrorCodeExamples;
 import com.sparta.common.component.BaseResponse;
 import com.sparta.common.component.CommonExceptionResultMessage;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -44,5 +46,13 @@ public class AuthController {
     })
     public BaseResponse<MemberResDto> signUp(@RequestBody @Valid MemberReqDto dto) {
         return BaseResponse.from(authService.signUp(dto));
+    }
+
+    @PostMapping("/logout")
+    @Operation(summary = "로그아웃 API", description = "로그아웃 API")
+    @ApiErrorCodeExample(CommonExceptionResultMessage.FAIL)
+    public BaseResponse<Boolean> logout(HttpServletRequest request) {
+        authService.logout(request);
+        return BaseResponse.from(true);
     }
 }
