@@ -34,4 +34,8 @@ public class Member extends BaseTimeEntity {
         this.email = email;
         this.deleted = false;
     }
+
+    public void update(String name) {
+        this.name = name;
+    }
 }

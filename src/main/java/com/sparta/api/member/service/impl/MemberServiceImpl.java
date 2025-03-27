@@ -1,5 +1,6 @@
 package com.sparta.api.member.service.impl;
 
+import com.sparta.api.member.dto.MemberModDto;
 import com.sparta.api.member.dto.MemberReqDto;
 import com.sparta.api.member.dto.MemberResDto;
 import com.sparta.api.member.entity.Member;
@@ -42,6 +43,14 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public MemberResDto findMemberById(Long id) {
         return new MemberResDto(this.getMember(id));
+    }
+
+    @Override
+    public MemberResDto updateMember(Long id, MemberModDto dto) {
+        Member member = this.getMember(id);
+        member.update(dto.getName());
+        memberRepository.save(member);
+        return new MemberResDto(member);
     }
 
     private Member getMember(Long id) {
