@@ -30,7 +30,7 @@ public class MemberServiceImpl implements MemberService {
             throw new CustomException(CommonExceptionResultMessage.DUPLICATE_FAIL, "이미 사용 중인 이메일입니다.");
         }
 
-        Member member = new Member(dto.getName(), email);
+        Member member = new Member(dto.getName(), email, dto.getPassword());
         memberRepository.save(member);
 
         if (member.getId() == null) {
