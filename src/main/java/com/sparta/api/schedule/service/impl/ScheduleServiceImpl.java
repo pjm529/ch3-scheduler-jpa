@@ -11,6 +11,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service("scheduleService")
 @RequiredArgsConstructor
 @Transactional
@@ -28,5 +31,13 @@ public class ScheduleServiceImpl implements ScheduleService {
         }
 
         return new ScheduleResDto(schedule);
+    }
+
+    @Override
+    public List<ScheduleResDto> findAllSchedule() {
+        List<Schedule> resultList = scheduleRepository.findAll();
+        return resultList.stream()
+                .map(ScheduleResDto::new)
+                .collect(Collectors.toList());
     }
 }

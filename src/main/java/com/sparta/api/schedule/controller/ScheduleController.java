@@ -10,7 +10,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -32,5 +35,17 @@ public class ScheduleController {
     })
     public BaseResponse<ScheduleResDto> saveSchedule(@RequestBody @Valid ScheduleReqDto dto) {
         return BaseResponse.from(scheduleService.saveSchedule(dto));
+    }
+
+    @GetMapping
+    @Operation(
+            summary = "일정 목록 조회 API",
+            description = "일정 목록을 조회하기 위한 API"
+    )
+    @ApiErrorCodeExamples({CommonExceptionResultMessage.DB_FAIL
+            , CommonExceptionResultMessage.FAIL
+    })
+    public BaseResponse<List<ScheduleResDto>> findAllSchedule() {
+        return BaseResponse.from(scheduleService.findAllSchedule());
     }
 }
