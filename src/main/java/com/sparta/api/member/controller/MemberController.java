@@ -56,4 +56,15 @@ public class MemberController {
             @RequestBody @Valid MemberModDto dto) {
         return BaseResponse.from(memberService.updateMember(id, dto));
     }
+
+    @DeleteMapping("/{id}")
+    @Operation(summary = "회원 삭제 API", description = "회원 삭제하기 위한 API")
+    @ApiErrorCodeExamples({CommonExceptionResultMessage.NOT_FOUND
+            , CommonExceptionResultMessage.DB_FAIL
+            , CommonExceptionResultMessage.FAIL
+    })
+    public BaseResponse<Boolean> deleteMember(@Schema(description = "회원 PK") @PathVariable Long id) {
+        memberService.deleteMember(id);
+        return BaseResponse.from(true);
+    }
 }
