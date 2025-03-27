@@ -1,5 +1,6 @@
 package com.sparta.api.schedule.controller;
 
+import com.sparta.api.schedule.dto.ScheduleDelDto;
 import com.sparta.api.schedule.dto.ScheduleReqDto;
 import com.sparta.api.schedule.dto.ScheduleResDto;
 import com.sparta.api.schedule.service.ScheduleService;
@@ -37,7 +38,8 @@ public class ScheduleController {
 
     @GetMapping
     @Operation(summary = "일정 목록 조회 API", description = "일정 목록을 조회하기 위한 API")
-    @ApiErrorCodeExamples({CommonExceptionResultMessage.DB_FAIL
+    @ApiErrorCodeExamples({CommonExceptionResultMessage.NOT_FOUND
+            , CommonExceptionResultMessage.DB_FAIL
             , CommonExceptionResultMessage.FAIL
     })
     public BaseResponse<List<ScheduleResDto>> findAllSchedule() {
@@ -57,6 +59,7 @@ public class ScheduleController {
     @PutMapping("/{id}")
     @Operation(summary = "일정 수정 API", description = "일정 수정하기 위한 API")
     @ApiErrorCodeExamples({CommonExceptionResultMessage.VALID_FAIL
+            , CommonExceptionResultMessage.EMAIL_MISMATCH
             , CommonExceptionResultMessage.NOT_FOUND
             , CommonExceptionResultMessage.DB_FAIL
             , CommonExceptionResultMessage.FAIL
@@ -73,8 +76,9 @@ public class ScheduleController {
             , CommonExceptionResultMessage.DB_FAIL
             , CommonExceptionResultMessage.FAIL
     })
-    public BaseResponse<Boolean> deleteSchedule(@Schema(description = "일정 PK") @PathVariable Long id) {
-        scheduleService.deleteSchedule(id);
+    public BaseResponse<Boolean> deleteSchedule(@Schema(description = "일정 PK") @PathVariable Long id
+            , @RequestBody @Valid ScheduleDelDto dto) {
+        scheduleService.deleteSchedule(id, dto);
         return BaseResponse.from(true);
     }
 }
