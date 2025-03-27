@@ -13,7 +13,7 @@ public class ReplyResDto {
     private Long id;
 
     @Schema(description = "일정 ID")
-    private Long scheduleIdd;
+    private Long scheduleId;
 
     @Schema(description = "댓글 내용")
     private String contents;
@@ -29,7 +29,7 @@ public class ReplyResDto {
 
     public ReplyResDto(Reply reply) {
         this.id = reply.getId();
-        this.scheduleIdd = reply.getSchedule().getId();
+        this.scheduleId = reply.getSchedule().getId();
         this.contents = reply.getContents();
         this.regNm = reply.getMember().getName();
         this.createdDate = reply.getCreatedDate();
