@@ -10,6 +10,7 @@ import com.sparta.common.component.CommonExceptionResultMessage;
 import com.sparta.common.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +21,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class MemberServiceImpl implements MemberService {
 
     private final MemberRepository memberRepository;
+
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public MemberResDto updateMember(MemberUpdateDto dto, Long memberId) {
@@ -42,7 +45,7 @@ public class MemberServiceImpl implements MemberService {
 
         Member member = this.getMember(memberId); // Member 조회
 
-        if (!StringUtils.equals(currentPw, member.getPassword())) { // 비밀번호 검증
+        if (!passwordEncoder.matches(currentPw, member.getPassword())) { // 비밀번호 검증
             throw new CustomException(CommonExceptionResultMessage.PW_MISMATCH);
         }
 
@@ -50,7 +53,8 @@ public class MemberServiceImpl implements MemberService {
             throw new CustomException(CommonExceptionResultMessage.VALID_FAIL, "현재 사용 중인 비밀번호입니다.");
         }
 
-        member.updatePw(newPw);
+        String encodePw = passwordEncoder.encode(newPw); // 비밀번호 암호화
+        member.updatePw(encodePw);
         memberRepository.save(member);
     }
 

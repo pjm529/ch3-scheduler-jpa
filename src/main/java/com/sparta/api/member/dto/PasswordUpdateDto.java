@@ -12,7 +12,7 @@ public class PasswordUpdateDto {
     @NotBlank(message = "기존 비밀번호를 입력해주세요.")
     private String currentPw;
 
-    @Schema(description = "새 비밀번호")
+    @Schema(description = "새 비밀번호", example = "string")
     @NotBlank(message = "새 비밀번호를 입력해주세요.")
     @Pattern(
             regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*(),.?\":{}|<>])[A-Za-z\\d!@#$%^&*(),.?\":{}|<>]{8,20}$",

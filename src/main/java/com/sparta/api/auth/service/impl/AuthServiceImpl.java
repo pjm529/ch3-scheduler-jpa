@@ -9,7 +9,7 @@ import com.sparta.api.member.repository.MemberRepository;
 import com.sparta.common.component.CommonExceptionResultMessage;
 import com.sparta.common.exception.CustomException;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,12 +22,15 @@ public class AuthServiceImpl implements AuthService {
 
     private final MemberRepository memberRepository;
 
+    private final PasswordEncoder passwordEncoder;
+
+
     @Override
     public MemberResDto login(LoginDto dto) {
         Member member = memberRepository.findByEmail(dto.getEmail())
                 .orElseThrow(() -> new CustomException(CommonExceptionResultMessage.LOGIN_FAILED));
 
-        if (!StringUtils.equals(dto.getPassword(), member.getPassword())) {
+        if (!passwordEncoder.matches(dto.getPassword(), member.getPassword())) {
             throw new CustomException(CommonExceptionResultMessage.LOGIN_FAILED);
         }
 
@@ -42,8 +45,9 @@ public class AuthServiceImpl implements AuthService {
         if (memberOpt.isPresent()) {
             throw new CustomException(CommonExceptionResultMessage.DUPLICATE_FAIL, "이미 사용 중인 이메일입니다.");
         }
+        String encodePw = passwordEncoder.encode(dto.getPassword()); // 비밀번호 암호화
 
-        Member member = new Member(dto.getName(), email, dto.getPassword());
+        Member member = new Member(dto.getName(), email, encodePw);
         memberRepository.save(member);
 
         if (member.getId() == null) {

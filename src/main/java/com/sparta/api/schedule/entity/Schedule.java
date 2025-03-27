@@ -6,7 +6,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
-import org.springframework.data.annotation.CreatedBy;
 
 @Entity
 @Getter
