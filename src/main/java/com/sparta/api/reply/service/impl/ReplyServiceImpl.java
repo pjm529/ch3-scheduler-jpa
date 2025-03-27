@@ -45,4 +45,14 @@ public class ReplyServiceImpl implements ReplyService {
 
         return new ReplyResDto(reply);
     }
+
+    @Override
+    public ReplyResDto findReplyById(Long id) {
+        return new ReplyResDto(this.getReply(id));
+    }
+
+    private Reply getReply(Long id) {
+        return replyRepository.findByIdWithActiveMemberAndActiveSchedule(id)
+                .orElseThrow(() -> new CustomException(CommonExceptionResultMessage.NOT_FOUND, "댓글 조회 실패: ID " + id + " 에 해당하는 댓글 없음")); // 조회 실패시 throw
+    }
 }
