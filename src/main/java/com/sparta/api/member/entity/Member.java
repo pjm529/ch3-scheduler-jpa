@@ -24,14 +24,18 @@ public class Member extends BaseTimeEntity {
     private String email; // 이메일
 
     @Column(nullable = false)
+    private String password; // 비밀번호
+
+    @Column(nullable = false)
     private Boolean deleted;
 
     public Member() {
     }
 
-    public Member(String name, String email) {
+    public Member(String name, String email, String password) {
         this.name = name;
         this.email = email;
+        this.password = password;
         this.deleted = false;
     }
 

@@ -18,6 +18,7 @@ public enum CommonExceptionResultMessage {
 	VALID_FAIL(HttpStatus.BAD_REQUEST, "E002", "유효성 검증에 실패하였습니다."),
 	DUPLICATE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "E003", "사용 중인 데이터입니다."),
 	EMAIL_MISMATCH(HttpStatus.UNAUTHORIZED, "E004", "이메일이 일치하지 않습니다."),
+  PW_MISMATCH(HttpStatus.UNAUTHORIZED, "E005", "비밀번호가 일치하지 않습니다."),
 	NOT_FOUND(HttpStatus.NOT_FOUND, "E404", "NOT FOUND"),
 
 	UNKNOWN_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "E999", "알 수 없는 오류");
