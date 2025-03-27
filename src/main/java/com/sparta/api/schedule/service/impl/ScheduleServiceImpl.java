@@ -57,16 +57,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     @Override
     public ScheduleResDto updateSchedule(Long id, ScheduleReqDto dto) {
-        String email = dto.getEmail();
-        Member member = memberRepository.findByEmail(dto.getEmail())
-                .orElseThrow(() -> new CustomException(CommonExceptionResultMessage.NOT_FOUND, email + " 에 해당하는 회원 없음")); // 조회 실패시 throw
-
-        Schedule schedule = this.getSchedule(id);
-
-        if (!member.getEmail().equals(schedule.getMember().getEmail())) { // 이메일 검증
-            throw new CustomException(CommonExceptionResultMessage.EMAIL_MISMATCH);
-        }
-
+        Schedule schedule = this.validMember(id, dto.getEmail());
         schedule.update(dto.getTitle(), dto.getContents()); // 정보 update
         scheduleRepository.save(schedule); // 저장
         return new ScheduleResDto(schedule);
@@ -74,8 +65,17 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     @Override
     public void deleteSchedule(Long id, ScheduleDelDto dto) {
-        String email = dto.getEmail();
-        Member member = memberRepository.findByEmail(dto.getEmail())
+        Schedule schedule = this.validMember(id, dto.getEmail());
+        scheduleRepository.delete(schedule);
+    }
+
+    private Schedule getSchedule(Long id) {
+        return scheduleRepository.findById(id)
+                .orElseThrow(() -> new CustomException(CommonExceptionResultMessage.NOT_FOUND, "일정 조회 실패: ID " + id + " 에 해당하는 일정 없음")); // 조회 실패시 throw
+    }
+
+    private Schedule validMember(Long id, String email) {
+        Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new CustomException(CommonExceptionResultMessage.NOT_FOUND, email + " 에 해당하는 회원 없음")); // 조회 실패시 throw
 
         Schedule schedule = this.getSchedule(id);
@@ -84,11 +84,6 @@ public class ScheduleServiceImpl implements ScheduleService {
             throw new CustomException(CommonExceptionResultMessage.EMAIL_MISMATCH);
         }
 
-        scheduleRepository.delete(schedule);
-    }
-
-    private Schedule getSchedule(Long id) {
-        return scheduleRepository.findById(id)
-                .orElseThrow(() -> new CustomException(CommonExceptionResultMessage.NOT_FOUND, "일정 조회 실패: ID " + id + " 에 해당하는 일정 없음")); // 조회 실패시 throw
+        return schedule;
     }
 }
