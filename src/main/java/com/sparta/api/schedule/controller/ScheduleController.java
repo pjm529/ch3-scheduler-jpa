@@ -17,12 +17,9 @@ import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/schedule")
-@CrossOrigin("*")
 @Tag(name = "Schedule API", description = "Schedule 관련 API 모음.")
 public class ScheduleController {
 

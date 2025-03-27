@@ -1,11 +1,11 @@
 package com.sparta.common.exception;
 
 import com.sparta.common.component.BaseResponse;
+import com.sparta.common.component.CommonExceptionResultMessage;
 import com.sparta.common.component.JSONResult;
 import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -35,9 +35,8 @@ public class ExceptionAdvice {
 		log.error("customException : " + e.getMessage(), e);
 
 		BaseResponse res = new BaseResponse();
-		String message = StringUtils.isEmpty(e.getMessage()) ? e.getResultMessage().getMessage() : e.getMessage();
-
-		res.setJsonResult(JSONResult.failBuilder(e, message));
+		// CustomException에서 정의한 에러 정보와 예외 메시지를 활용
+		res.setJsonResult(JSONResult.failure(e.getResultMessage(), e));
 		return ResponseEntity.status(e.getResultMessage().getStatus()).body(res);
 	}
 
@@ -51,7 +50,7 @@ public class ExceptionAdvice {
 		log.error("Exception URI : " + request.getRequestURI());
 		log.error("NotFound : " + e.getMessage(), e);
 		BaseResponse res = new BaseResponse();
-		res.setJsonResult(JSONResult.notFoundBuilder(e));
+		res.setJsonResult(JSONResult.failure(CommonExceptionResultMessage.NOT_FOUND, e));
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(res);
 	}
 
@@ -62,7 +61,7 @@ public class ExceptionAdvice {
 		log.error("DataAccessException : " + e.getMessage(), e);
 
 		BaseResponse res = new BaseResponse();
-		res.setJsonResult(JSONResult.dbFailBuilder(e));
+		res.setJsonResult(JSONResult.failure(CommonExceptionResultMessage.DB_FAIL, e));
 		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(res);
 	}
 
@@ -73,11 +72,11 @@ public class ExceptionAdvice {
 		log.error("MethodArgumentNotValidException : " + e.getMessage(), e);
 
 		List<FieldError> fieldErrors = e.getBindingResult().getFieldErrors();
-		FieldError fieldError = fieldErrors.get(fieldErrors.size() - 1);  // 가장 첫 번째 에러 필드
-		String fieldName = fieldError.getField();   // 필드명
-		Object rejectedValue = fieldError.getRejectedValue();   // 입력값
+		FieldError fieldError = fieldErrors.get(fieldErrors.size() - 1);  // 가장 마지막 에러 필드 선택
+		String message = fieldError.getDefaultMessage();
+
 		BaseResponse res = new BaseResponse();
-		res.setJsonResult(JSONResult.validFailBuilder(e, fieldError.getDefaultMessage()));
+		res.setJsonResult(JSONResult.failure(CommonExceptionResultMessage.VALID_FAIL, message));
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
 	}
 
@@ -87,7 +86,7 @@ public class ExceptionAdvice {
 		log.error("Exception URI : " + request.getRequestURI());
 		log.error("Exception : " + e.getMessage(), e);
 		BaseResponse res = new BaseResponse();
-		res.setJsonResult(JSONResult.failBuilder(e));
+		res.setJsonResult(JSONResult.failure(CommonExceptionResultMessage.FAIL, e));
 		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(res);
 	}
 }

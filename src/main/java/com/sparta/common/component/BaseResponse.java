@@ -20,7 +20,7 @@ public class BaseResponse<T> implements Serializable {
     }
 
     private BaseResponse(T data) {
-        this.jsonResult = JSONResult.successBuilder();
+        this.jsonResult = JSONResult.success();
         this.data = data;
     }
 

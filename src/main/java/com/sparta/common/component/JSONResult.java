@@ -1,21 +1,15 @@
 package com.sparta.common.component;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.sparta.common.exception.CustomException;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.models.examples.Example;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.dao.DataAccessException;
-import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.apache.commons.lang3.StringUtils;
 
 import java.time.LocalDateTime;
-
-import static com.sparta.common.component.CommonExceptionResultMessage.*;
-import static com.sparta.common.component.CommonExceptionResultMessage.VALID_FAIL;
-
 
 @Getter
 @Builder
@@ -39,66 +33,51 @@ public class JSONResult {
 	@Schema(description = "시간", example = "yyyy-MM-dd HH:mm:ss")
 	private LocalDateTime timestamp;
 
-	public static JSONResult successBuilder() {
+	public static JSONResult success() {
 		return JSONResult.builder()
-				.status(SUCCESS.getStatus().value())
-				.code(SUCCESS.getCode())
-				.message(SUCCESS.getMessage())
+				.status(CommonExceptionResultMessage.SUCCESS.getStatus().value())
+				.code(CommonExceptionResultMessage.SUCCESS.getCode())
+				.message(CommonExceptionResultMessage.SUCCESS.getMessage())
 				.timestamp(LocalDateTime.now())
 				.build();
 	}
 
-	public static JSONResult failBuilder(Exception e) {
+	/**
+	 * 기본 실패 응답: 전달받은 에러 enum을 그대로 사용
+	 */
+	public static JSONResult failure(CommonExceptionResultMessage error) {
 		return JSONResult.builder()
-				.status(FAIL.getStatus().value())
-				.code(FAIL.getCode())
-				.message(FAIL.getMessage())
+				.status(error.getStatus().value())
+				.code(error.getCode())
+				.message(error.getMessage())
 				.timestamp(LocalDateTime.now())
 				.build();
 	}
 
-    public static JSONResult failBuilder(CustomException e, String message) {
-        return JSONResult.builder()
-            .status(e.getResultMessage().getStatus().value())
-            .code(e.getResultMessage().getCode())
-            .message(message)
-			.timestamp(LocalDateTime.now())
-            .build();
-    }
-
-
-	public static JSONResult dbFailBuilder(DataAccessException e) {
+	/**
+	 * 예외 객체의 메시지를 활용하여 실패 응답 생성.
+	 * 예외 메시지가 있으면 해당 메시지를, 없으면 기본 메시지를 사용.
+	 */
+	public static JSONResult failure(CommonExceptionResultMessage error, Exception ex) {
+		String message = (ex != null && StringUtils.isNotBlank(ex.getMessage()))
+				? ex.getMessage() : error.getMessage();
 		return JSONResult.builder()
-				.status(DB_FAIL.getStatus().value())
-				.code(DB_FAIL.getCode())
-				.message(DB_FAIL.getMessage())
-				.timestamp(LocalDateTime.now())
-				.build();
-	}
-
-	public static JSONResult notFoundBuilder(Exception e) {
-		return JSONResult.builder()
-				.status(NOT_FOUND.getStatus().value())
-				.code(NOT_FOUND.getCode())
-				.message(NOT_FOUND.getMessage())
-				.timestamp(LocalDateTime.now())
-				.build();
-	}
-
-	public static JSONResult validFailBuilder(MethodArgumentNotValidException e, String message) {
-		return JSONResult.builder()
-				.status(VALID_FAIL.getStatus().value())
-				.code(VALID_FAIL.getCode())
+				.status(error.getStatus().value())
+				.code(error.getCode())
 				.message(message)
 				.timestamp(LocalDateTime.now())
 				.build();
 	}
 
-	public static JSONResult unAuthentication() {
+	/**
+	 * 사용자 정의 메시지를 전달하여 실패 응답 생성.
+	 */
+	public static JSONResult failure(CommonExceptionResultMessage error, String customMessage) {
+		String message = StringUtils.isNotBlank(customMessage) ? customMessage : error.getMessage();
 		return JSONResult.builder()
-				.status(AUTHENTICATION_FAILED.getStatus().value())
-				.code(AUTHENTICATION_FAILED.getCode())
-				.message(AUTHENTICATION_FAILED.getMessage())
+				.status(error.getStatus().value())
+				.code(error.getCode())
+				.message(message)
 				.timestamp(LocalDateTime.now())
 				.build();
 	}

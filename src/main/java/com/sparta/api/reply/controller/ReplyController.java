@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/reply")
-@CrossOrigin("*")
 @Tag(name = "Reply API", description = "Reply 관련 API 모음.")
 public class ReplyController {
 

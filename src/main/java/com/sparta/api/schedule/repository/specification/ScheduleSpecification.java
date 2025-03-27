@@ -19,7 +19,6 @@ public class ScheduleSpecification {
             // Member의 deleted 필드가 false 인 조건 생성
             Predicate activeMemberPredicate = criteriaBuilder.isFalse(memberJoin.get("deleted"));
 
-            // 필요에 따라 추가 Predicate를 넣을 수 있습니다.
             List<Predicate> predicates = new ArrayList<>();
             predicates.add(activeMemberPredicate);
 

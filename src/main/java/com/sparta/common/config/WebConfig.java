@@ -7,7 +7,6 @@ import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.sparta.common.filter.CustomFilter;
 import com.sparta.common.filter.LoginFilter;
-import com.sparta.common.interceptor.LoggingInterceptor;
 import jakarta.servlet.Filter;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -15,20 +14,22 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
     @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(loggingInterceptor())
-                .excludePathPatterns(
-                        "error"
-                );
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+                // allowedOriginPatterns를 사용하면 와일드카드 패턴 사용이 가능합니다.
+                .allowedOriginPatterns("*")
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                .allowedHeaders("*")
+                .allowCredentials(true)
+                .maxAge(3600);
     }
-
     @Bean
     @Scope("prototype")
     public ObjectMapper objectMapper() {
@@ -39,10 +40,6 @@ public class WebConfig implements WebMvcConfigurer {
         return mapper;
     }
 
-    @Bean
-    public LoggingInterceptor loggingInterceptor() {
-        return new LoggingInterceptor();
-    }
 
     @Bean
     public FilterRegistrationBean customFilter() {

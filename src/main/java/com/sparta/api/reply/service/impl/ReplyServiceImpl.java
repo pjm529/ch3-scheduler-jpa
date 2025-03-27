@@ -29,16 +29,16 @@ public class ReplyServiceImpl implements ReplyService {
 
     @Override
     public ReplyResDto saveReply(ReplyReqDto dto, Long memberId) {
-        Member member = memberRepository.findById(memberId)
+        Member member = memberRepository.findById(memberId) // Member 조회
                 .orElseThrow(() -> new CustomException(CommonExceptionResultMessage.NOT_FOUND, "회원 조회 실패: ID " + memberId + " 에 해당하는 회원 없음")); // 조회 실패시 throw
 
         Long scheduleId = dto.getScheduleId();
-        Schedule schedule = scheduleRepository.findById(scheduleId)
+        Schedule schedule = scheduleRepository.findById(scheduleId) // 일정 조회
                 .orElseThrow(() -> new CustomException(CommonExceptionResultMessage.NOT_FOUND, "일정 조회 실패: ID " + scheduleId + " 에 해당하는 일정 없음")); // 조회 실패시 throw
 
 
         Reply reply = new Reply(dto.getContents(), schedule, member);
-        replyRepository.save(reply);
+        replyRepository.save(reply); // 댓긇 저장
 
         if (reply.getId() == null) {
             throw new CustomException(CommonExceptionResultMessage.DB_FAIL, "댓글 등록에 실패했습니다.");
@@ -54,7 +54,7 @@ public class ReplyServiceImpl implements ReplyService {
 
     @Override
     public ReplyResDto updateReply(Long id, ReplyUpdateDto dto, Long memberId) {
-        Reply reply = this.validMember(id, memberId);
+        Reply reply = this.validMember(id, memberId); // Reply 조회
         reply.update(dto.getContents()); // 정보 update
         replyRepository.save(reply); // 저장
         return new ReplyResDto(reply);
@@ -62,8 +62,8 @@ public class ReplyServiceImpl implements ReplyService {
 
     @Override
     public void deleteReply(Long id, Long memberId) {
-        Reply reply = this.validMember(id, memberId);
-        replyRepository.delete(reply);
+        Reply reply = this.validMember(id, memberId); // reply 조회
+        replyRepository.delete(reply); // 삭제
     }
 
     private Reply getReply(Long id) {

@@ -4,7 +4,7 @@ import com.sparta.api.member.entity.Member;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 
-import java.time.format.DateTimeFormatter;
+import java.time.LocalDateTime;
 
 @Getter
 public class MemberResDto {
@@ -19,18 +19,16 @@ public class MemberResDto {
     private String email;
 
     @Schema(description = "등록일")
-    private String createdDate;
+    private LocalDateTime createdDate;
 
     @Schema(description = "수정일")
-    private String modifiedDate;
+    private LocalDateTime modifiedDate;
 
     public MemberResDto (Member member) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-
         this.id = member.getId();
         this.name = member.getName();
         this.email = member.getEmail();
-        this.createdDate = formatter.format(member.getCreatedDate());
-        this.modifiedDate = formatter.format(member.getModifiedDate());
+        this.createdDate = member.getCreatedDate();
+        this.modifiedDate = member.getModifiedDate();
     }
 }

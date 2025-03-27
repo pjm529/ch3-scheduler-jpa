@@ -26,7 +26,7 @@ import java.io.IOException;
 public class LoginFilter implements Filter {
 
     // 인증을 하지 않아도 될 URL Path 배열
-    private static final String[] WHITE_LIST = {"/swagger-ui/**", "/api-docs", "/swagger-ui-custom.html",
+    private static final String[] WHITE_LIST = {"/", "/swagger-ui/**", "/api-docs", "/swagger-ui-custom.html",
             "/v3/api-docs/**", "/api-docs/**", "/swagger-ui.html", "/api/auth/signup", "/api/auth/login", "/api/auth/logout"};
 
     @Override
@@ -78,7 +78,7 @@ public class LoginFilter implements Filter {
 
         // BaseResponse 및 JSONResult 객체 구성
         BaseResponse res = new BaseResponse();
-        res.setJsonResult(JSONResult.unAuthentication());
+        res.setJsonResult(JSONResult.failure(CommonExceptionResultMessage.AUTHENTICATION_FAILED, ""));
 
         String responseBody = objectMapper.writeValueAsString(res);
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
