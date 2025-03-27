@@ -7,7 +7,6 @@ import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.sparta.common.filter.CustomFilter;
 import com.sparta.common.filter.LoginFilter;
-import com.sparta.common.interceptor.LoggingInterceptor;
 import jakarta.servlet.Filter;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -21,13 +20,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(loggingInterceptor())
-                .excludePathPatterns(
-                        "error"
-                );
-    }
 
     @Bean
     @Scope("prototype")
@@ -39,10 +31,6 @@ public class WebConfig implements WebMvcConfigurer {
         return mapper;
     }
 
-    @Bean
-    public LoggingInterceptor loggingInterceptor() {
-        return new LoggingInterceptor();
-    }
 
     @Bean
     public FilterRegistrationBean customFilter() {
