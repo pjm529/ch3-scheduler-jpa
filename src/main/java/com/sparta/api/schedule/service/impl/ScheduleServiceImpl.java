@@ -23,8 +23,8 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     @Override
     public ScheduleResDto saveSchedule(ScheduleReqDto dto) {
-        Schedule schedule = new Schedule(dto.getTitle(), dto.getContents(), dto.getRegNm());
-        scheduleRepository.save(schedule);
+        Schedule schedule = new Schedule(dto.getTitle(), dto.getContents(), dto.getRegNm()); // Schedule 생성
+        scheduleRepository.save(schedule); // 일정 저장
 
         if (schedule.getId() == null) {
             throw new CustomException(CommonExceptionResultMessage.DB_FAIL, "일정 등록에 실패했습니다.");
@@ -35,16 +35,28 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     @Override
     public List<ScheduleResDto> findAllSchedule() {
-        List<Schedule> resultList = scheduleRepository.findAll();
+        List<Schedule> resultList = scheduleRepository.findAll(); // 일정 목록 조회
         return resultList.stream()
-                .map(ScheduleResDto::new)
+                .map(ScheduleResDto::new) // Response 로 mapping
                 .collect(Collectors.toList());
     }
 
     @Override
     public ScheduleResDto findScheduleById(Long id) {
+        return new ScheduleResDto(this.getSchedule(id));
+    }
+
+    @Override
+    public ScheduleResDto updateSchedule(Long id, ScheduleReqDto dto) {
+        Schedule schedule = this.getSchedule(id);
+
+        schedule.update(dto.getTitle(), dto.getContents(), dto.getRegNm()); // 정보 update
+        scheduleRepository.save(schedule); // 저장
+        return new ScheduleResDto(schedule);
+    }
+
+    private Schedule getSchedule(Long id) {
         return scheduleRepository.findById(id)
-                .map(ScheduleResDto::new) // 일정 조회 후 mapping
-                .orElseThrow(() -> new CustomException(CommonExceptionResultMessage.NOT_FOUND, "일정 조회 실패: ID " + id + " 에 해당하는 일정 없음"));
+                .orElseThrow(() -> new CustomException(CommonExceptionResultMessage.NOT_FOUND, "일정 조회 실패: ID " + id + " 에 해당하는 일정 없음")); // 조회 실패시 throw
     }
 }

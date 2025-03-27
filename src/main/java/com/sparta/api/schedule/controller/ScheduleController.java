@@ -26,10 +26,7 @@ public class ScheduleController {
     private final ScheduleService scheduleService;
 
     @PostMapping
-    @Operation(
-            summary = "일정 등록 API",
-            description = "일정 등록하기 위한 API"
-    )
+    @Operation(summary = "일정 등록 API", description = "일정 등록하기 위한 API")
     @ApiErrorCodeExamples({CommonExceptionResultMessage.VALID_FAIL
             , CommonExceptionResultMessage.DB_FAIL
             , CommonExceptionResultMessage.FAIL
@@ -39,10 +36,7 @@ public class ScheduleController {
     }
 
     @GetMapping
-    @Operation(
-            summary = "일정 목록 조회 API",
-            description = "일정 목록을 조회하기 위한 API"
-    )
+    @Operation(summary = "일정 목록 조회 API", description = "일정 목록을 조회하기 위한 API")
     @ApiErrorCodeExamples({CommonExceptionResultMessage.DB_FAIL
             , CommonExceptionResultMessage.FAIL
     })
@@ -51,15 +45,25 @@ public class ScheduleController {
     }
 
     @GetMapping("/{id}")
-    @Operation(
-            summary = "일정 상세 조회 API",
-            description = "일정 상세를 조회하기 위한 API"
-    )
+    @Operation(summary = "일정 상세 조회 API", description = "일정 상세를 조회하기 위한 API")
     @ApiErrorCodeExamples({CommonExceptionResultMessage.NOT_FOUND
             , CommonExceptionResultMessage.DB_FAIL
             , CommonExceptionResultMessage.FAIL
     })
     public BaseResponse<ScheduleResDto> findScheduleById(@Schema(description = "일정 PK") @PathVariable Long id) {
         return BaseResponse.from(scheduleService.findScheduleById(id));
+    }
+
+    @PutMapping("/{id}")
+    @Operation(summary = "일정 수정 API", description = "일정 수정하기 위한 API")
+    @ApiErrorCodeExamples({CommonExceptionResultMessage.VALID_FAIL
+            , CommonExceptionResultMessage.NOT_FOUND
+            , CommonExceptionResultMessage.DB_FAIL
+            , CommonExceptionResultMessage.FAIL
+    })
+    public BaseResponse<ScheduleResDto> updateSchedule(
+            @Schema(description = "일정 PK") @PathVariable Long id,
+            @RequestBody @Valid ScheduleReqDto dto) {
+        return BaseResponse.from(scheduleService.updateSchedule(id, dto));
     }
 }

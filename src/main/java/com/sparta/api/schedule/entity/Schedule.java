@@ -33,4 +33,10 @@ public class Schedule extends BaseTimeEntity {
         this.contents = contents;
         this.regNm = regNm;
     }
+
+    public void update(String title, String contents, String regNm) {
+        this.title = title;
+        this.contents = contents;
+        this.regNm = regNm;
+    }
 }
