@@ -38,4 +38,14 @@ public class MemberServiceImpl implements MemberService {
 
         return new MemberResDto(member);
     }
+
+    @Override
+    public MemberResDto findMemberById(Long id) {
+        return new MemberResDto(this.getMember(id));
+    }
+
+    private Member getMember(Long id) {
+        return memberRepository.findById(id)
+                .orElseThrow(() -> new CustomException(CommonExceptionResultMessage.NOT_FOUND, "회원 조회 실패: ID " + id + " 에 해당하는 회원 없음")); // 조회 실패시 throw
+    }
 }

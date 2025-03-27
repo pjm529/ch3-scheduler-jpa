@@ -7,6 +7,7 @@ import com.sparta.common.annotation.ApiErrorCodeExamples;
 import com.sparta.common.component.BaseResponse;
 import com.sparta.common.component.CommonExceptionResultMessage;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -30,5 +31,15 @@ public class MemberController {
     })
     public BaseResponse<MemberResDto> saveMember(@RequestBody @Valid MemberReqDto dto) {
         return BaseResponse.from(memberService.saveMember(dto));
+    }
+
+    @GetMapping("/{id}")
+    @Operation(summary = "회원 상세 조회 API", description = "회원 상세 조회하기 위한 API")
+    @ApiErrorCodeExamples({CommonExceptionResultMessage.NOT_FOUND
+            , CommonExceptionResultMessage.DB_FAIL
+            , CommonExceptionResultMessage.FAIL
+    })
+    public BaseResponse<MemberResDto> findMemberById(@Schema(description = "회원 PK") @PathVariable Long id) {
+        return BaseResponse.from(memberService.findMemberById(id));
     }
 }
