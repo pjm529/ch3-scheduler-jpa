@@ -24,5 +24,14 @@ public class Member extends BaseTimeEntity {
     private String email; // 이메일
 
     @Column(nullable = false)
-    private Boolean deleted = false;
+    private Boolean deleted;
+
+    public Member() {
+    }
+
+    public Member(String name, String email) {
+        this.name = name;
+        this.email = email;
+        this.deleted = false;
+    }
 }
