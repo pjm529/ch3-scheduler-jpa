@@ -1,5 +1,8 @@
 package com.sparta.api.schedule.service.impl;
 
+import com.sparta.api.member.entity.Member;
+import com.sparta.api.member.repository.MemberRepository;
+import com.sparta.api.schedule.dto.ScheduleDelDto;
 import com.sparta.api.schedule.dto.ScheduleReqDto;
 import com.sparta.api.schedule.dto.ScheduleResDto;
 import com.sparta.api.schedule.entity.Schedule;
@@ -21,9 +24,15 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     private final ScheduleRepository scheduleRepository;
 
+    private final MemberRepository memberRepository;
+
     @Override
     public ScheduleResDto saveSchedule(ScheduleReqDto dto) {
-        Schedule schedule = new Schedule(dto.getTitle(), dto.getContents(), dto.getRegNm()); // Schedule 생성
+        String email = dto.getEmail();
+        Member member = memberRepository.findByEmail(dto.getEmail())
+                .orElseThrow(() -> new CustomException(CommonExceptionResultMessage.NOT_FOUND, email + " 에 해당하는 회원 없음")); // 조회 실패시 throw
+
+        Schedule schedule = new Schedule(dto.getTitle(), dto.getContents(), member); // Schedule 생성
         scheduleRepository.save(schedule); // 일정 저장
 
         if (schedule.getId() == null) {
@@ -48,21 +57,33 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     @Override
     public ScheduleResDto updateSchedule(Long id, ScheduleReqDto dto) {
-        Schedule schedule = this.getSchedule(id);
-
-        schedule.update(dto.getTitle(), dto.getContents(), dto.getRegNm()); // 정보 update
+        Schedule schedule = this.validMember(id, dto.getEmail());
+        schedule.update(dto.getTitle(), dto.getContents()); // 정보 update
         scheduleRepository.save(schedule); // 저장
         return new ScheduleResDto(schedule);
     }
 
     @Override
-    public void deleteSchedule(Long id) {
-        Schedule schedule = this.getSchedule(id);
+    public void deleteSchedule(Long id, ScheduleDelDto dto) {
+        Schedule schedule = this.validMember(id, dto.getEmail());
         scheduleRepository.delete(schedule);
     }
 
     private Schedule getSchedule(Long id) {
         return scheduleRepository.findById(id)
                 .orElseThrow(() -> new CustomException(CommonExceptionResultMessage.NOT_FOUND, "일정 조회 실패: ID " + id + " 에 해당하는 일정 없음")); // 조회 실패시 throw
+    }
+
+    private Schedule validMember(Long id, String email) {
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new CustomException(CommonExceptionResultMessage.NOT_FOUND, email + " 에 해당하는 회원 없음")); // 조회 실패시 throw
+
+        Schedule schedule = this.getSchedule(id);
+
+        if (!member.getEmail().equals(schedule.getMember().getEmail())) { // 이메일 검증
+            throw new CustomException(CommonExceptionResultMessage.EMAIL_MISMATCH);
+        }
+
+        return schedule;
     }
 }

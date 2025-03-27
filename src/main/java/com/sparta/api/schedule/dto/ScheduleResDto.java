@@ -33,7 +33,7 @@ public class ScheduleResDto {
         this.id = schedule.getId();
         this.title = schedule.getTitle();
         this.contents = schedule.getContents();
-        this.regNm = schedule.getRegNm();
+        this.regNm = schedule.getMember().getName();
         this.createdDate = formatter.format(schedule.getCreatedDate());
         this.modifiedDate = formatter.format(schedule.getModifiedDate());
     }
