@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 
 @Getter
-public class MemberModDto {
+public class MemberDelDto {
 
     @Schema(description = "회원 이름")
     @NotBlank(message = "회원 이름을 입력해주세요.")

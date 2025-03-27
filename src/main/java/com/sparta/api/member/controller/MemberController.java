@@ -1,5 +1,6 @@
 package com.sparta.api.member.controller;
 
+import com.sparta.api.member.dto.MemberDelDto;
 import com.sparta.api.member.dto.MemberModDto;
 import com.sparta.api.member.dto.MemberReqDto;
 import com.sparta.api.member.dto.MemberResDto;
@@ -47,12 +48,13 @@ public class MemberController {
     @PutMapping("/{id}")
     @Operation(summary = "회원 수정 API", description = "회원 수정하기 위한 API")
     @ApiErrorCodeExamples({CommonExceptionResultMessage.VALID_FAIL
+            , CommonExceptionResultMessage.PW_MISMATCH
             , CommonExceptionResultMessage.NOT_FOUND
             , CommonExceptionResultMessage.DB_FAIL
             , CommonExceptionResultMessage.FAIL
     })
     public BaseResponse<MemberResDto> updateMember(
-            @Schema(description = "일정 PK") @PathVariable Long id,
+            @Schema(description = "회원 PK") @PathVariable Long id,
             @RequestBody @Valid MemberModDto dto) {
         return BaseResponse.from(memberService.updateMember(id, dto));
     }
@@ -60,11 +62,14 @@ public class MemberController {
     @DeleteMapping("/{id}")
     @Operation(summary = "회원 삭제 API", description = "회원 삭제하기 위한 API")
     @ApiErrorCodeExamples({CommonExceptionResultMessage.NOT_FOUND
+            , CommonExceptionResultMessage.VALID_FAIL
+            , CommonExceptionResultMessage.PW_MISMATCH
             , CommonExceptionResultMessage.DB_FAIL
             , CommonExceptionResultMessage.FAIL
     })
-    public BaseResponse<Boolean> deleteMember(@Schema(description = "회원 PK") @PathVariable Long id) {
-        memberService.deleteMember(id);
+    public BaseResponse<Boolean> deleteMember(@Schema(description = "회원 PK") @PathVariable Long id,
+                                              @RequestBody @Valid MemberDelDto dto) {
+        memberService.deleteMember(id, dto);
         return BaseResponse.from(true);
     }
 }

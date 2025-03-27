@@ -1,5 +1,6 @@
 package com.sparta.api.member.service.impl;
 
+import com.sparta.api.member.dto.MemberDelDto;
 import com.sparta.api.member.dto.MemberModDto;
 import com.sparta.api.member.dto.MemberReqDto;
 import com.sparta.api.member.dto.MemberResDto;
@@ -48,14 +49,20 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public MemberResDto updateMember(Long id, MemberModDto dto) {
         Member member = this.getMember(id);
+        if (!member.getPassword().equals(dto.getPassword())) {
+            throw new CustomException(CommonExceptionResultMessage.PW_MISMATCH);
+        }
         member.update(dto.getName());
         memberRepository.save(member);
         return new MemberResDto(member);
     }
 
     @Override
-    public void deleteMember(Long id) {
+    public void deleteMember(Long id, MemberDelDto dto) {
         Member member = this.getMember(id);
+        if (!member.getPassword().equals(dto.getPassword())) {
+            throw new CustomException(CommonExceptionResultMessage.PW_MISMATCH);
+        }
         memberRepository.delete(member);
     }
 
