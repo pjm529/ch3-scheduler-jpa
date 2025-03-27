@@ -1,10 +1,13 @@
 package com.sparta.api.schedule.dto;
 
+import com.sparta.api.reply.dto.ReplyResDto;
 import com.sparta.api.schedule.entity.Schedule;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 
 import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 public class ScheduleResDto {
@@ -27,6 +30,10 @@ public class ScheduleResDto {
     @Schema(description = "수정일")
     private String modifiedDate;
 
+    @Schema(description = "댓글 목록")
+    private List<ReplyResDto> replyList;
+
+
     public ScheduleResDto(Schedule schedule) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
@@ -36,5 +43,7 @@ public class ScheduleResDto {
         this.regNm = schedule.getMember().getName();
         this.createdDate = formatter.format(schedule.getCreatedDate());
         this.modifiedDate = formatter.format(schedule.getModifiedDate());
+        this.replyList = schedule.getReplyList().stream().map(ReplyResDto::new).collect(Collectors.toList());
     }
+
 }
