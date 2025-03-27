@@ -45,4 +45,8 @@ public class Reply extends BaseTimeEntity {
         this.member = member;
         this.deleted = false;
     }
+
+    public void update(String contents) {
+        this.contents = contents;
+    }
 }

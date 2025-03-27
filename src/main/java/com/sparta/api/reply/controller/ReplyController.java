@@ -3,8 +3,8 @@ package com.sparta.api.reply.controller;
 import com.sparta.api.member.dto.MemberResDto;
 import com.sparta.api.reply.dto.ReplyReqDto;
 import com.sparta.api.reply.dto.ReplyResDto;
+import com.sparta.api.reply.dto.ReplyUpdateDto;
 import com.sparta.api.reply.service.ReplyService;
-import com.sparta.api.schedule.dto.ScheduleResDto;
 import com.sparta.common.annotation.ApiErrorCodeExamples;
 import com.sparta.common.component.BaseResponse;
 import com.sparta.common.component.CommonExceptionResultMessage;
@@ -47,7 +47,24 @@ public class ReplyController {
             , CommonExceptionResultMessage.DB_FAIL
             , CommonExceptionResultMessage.FAIL
     })
-    public BaseResponse<ReplyResDto> findReplyById(@Schema(description = "댓글 ID") @PathVariable Long id) {
+    public BaseResponse<ReplyResDto> findReplyById(@Schema(description = "댓글 PK") @PathVariable Long id) {
         return BaseResponse.from(replyService.findReplyById(id));
+    }
+
+    @PutMapping("/{id}")
+    @Operation(summary = "댓글 수정 API")
+    @ApiErrorCodeExamples({CommonExceptionResultMessage.VALID_FAIL
+            , CommonExceptionResultMessage.ACCESS_DENIED
+            , CommonExceptionResultMessage.AUTHENTICATION_FAILED
+            , CommonExceptionResultMessage.NOT_FOUND
+            , CommonExceptionResultMessage.DB_FAIL
+            , CommonExceptionResultMessage.FAIL
+    })
+    public BaseResponse<ReplyResDto> updateReply(@Schema(description = "댓글 PK") @PathVariable Long id,
+                                                 @RequestBody @Valid ReplyUpdateDto dto, HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        MemberResDto sessionMember = (MemberResDto) session.getAttribute(SystemValues.LOGIN_USER.getValue()); // sessionMember
+
+        return BaseResponse.from(replyService.updateReply(id, dto, sessionMember.getId()));
     }
 }

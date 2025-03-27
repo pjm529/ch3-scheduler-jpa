@@ -4,6 +4,7 @@ import com.sparta.api.member.entity.Member;
 import com.sparta.api.member.repository.MemberRepository;
 import com.sparta.api.reply.dto.ReplyReqDto;
 import com.sparta.api.reply.dto.ReplyResDto;
+import com.sparta.api.reply.dto.ReplyUpdateDto;
 import com.sparta.api.reply.entity.Reply;
 import com.sparta.api.reply.repository.ReplyRepository;
 import com.sparta.api.reply.service.ReplyService;
@@ -51,8 +52,29 @@ public class ReplyServiceImpl implements ReplyService {
         return new ReplyResDto(this.getReply(id));
     }
 
+    @Override
+    public ReplyResDto updateReply(Long id, ReplyUpdateDto dto, Long memberId) {
+        Reply reply = this.validMember(id, memberId);
+        reply.update(dto.getContents()); // 정보 update
+        replyRepository.save(reply); // 저장
+        return new ReplyResDto(reply);
+    }
+
     private Reply getReply(Long id) {
         return replyRepository.findByIdWithActiveMemberAndActiveSchedule(id)
                 .orElseThrow(() -> new CustomException(CommonExceptionResultMessage.NOT_FOUND, "댓글 조회 실패: ID " + id + " 에 해당하는 댓글 없음")); // 조회 실패시 throw
+    }
+
+    private Reply validMember(Long id, Long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new CustomException(CommonExceptionResultMessage.NOT_FOUND, "회원 조회 실패: ID " + memberId + " 에 해당하는 회원 없음")); // 조회 실패시 throw
+
+        Reply reply = this.getReply(id);
+
+        if (!memberId.equals(reply.getMember().getId())) { // 회원 검증
+            throw new CustomException(CommonExceptionResultMessage.ACCESS_DENIED);
+        }
+
+        return reply;
     }
 }
