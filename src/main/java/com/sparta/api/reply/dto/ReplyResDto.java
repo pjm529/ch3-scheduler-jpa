@@ -4,7 +4,7 @@ import com.sparta.api.reply.entity.Reply;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 
-import java.time.format.DateTimeFormatter;
+import java.time.LocalDateTime;
 
 @Getter
 public class ReplyResDto {
@@ -22,19 +22,17 @@ public class ReplyResDto {
     private String regNm;
 
     @Schema(description = "등록일")
-    private String createdDate;
+    private LocalDateTime createdDate;
 
     @Schema(description = "수정일")
-    private String modifiedDate;
+    private LocalDateTime modifiedDate;
 
     public ReplyResDto(Reply reply) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-
         this.id = reply.getId();
         this.scheduleIdd = reply.getSchedule().getId();
         this.contents = reply.getContents();
         this.regNm = reply.getMember().getName();
-        this.createdDate = formatter.format(reply.getCreatedDate());
-        this.modifiedDate = formatter.format(reply.getModifiedDate());
+        this.createdDate = reply.getCreatedDate();
+        this.modifiedDate = reply.getModifiedDate();
     }
 }
