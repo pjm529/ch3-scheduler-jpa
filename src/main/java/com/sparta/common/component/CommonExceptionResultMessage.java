@@ -11,19 +11,25 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 public enum CommonExceptionResultMessage {
 
-	/* JSON 결과 */
-	SUCCESS(HttpStatus.OK, "A000", "요청 처리 성공"),
-	FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "E000", "요청 처리 실패"),
-	DB_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "E001", "요청 DB 처리 실패"),
-	VALID_FAIL(HttpStatus.BAD_REQUEST, "E002", "유효성 검증에 실패하였습니다."),
-	DUPLICATE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "E003", "사용 중인 데이터입니다."),
-	EMAIL_MISMATCH(HttpStatus.UNAUTHORIZED, "E004", "이메일이 일치하지 않습니다."),
-  PW_MISMATCH(HttpStatus.UNAUTHORIZED, "E005", "비밀번호가 일치하지 않습니다."),
-	NOT_FOUND(HttpStatus.NOT_FOUND, "E404", "NOT FOUND"),
+    /* JSON 결과 */
+    SUCCESS(HttpStatus.OK, "A000", "요청 처리 성공"),
+    FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "E000", "요청 처리 실패"),
+    DB_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "E001", "요청 DB 처리 실패"),
+    VALID_FAIL(HttpStatus.BAD_REQUEST, "E002", "유효성 검증에 실패하였습니다."),
+    DUPLICATE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "E003", "사용 중인 데이터입니다."),
+    EMAIL_MISMATCH(HttpStatus.UNAUTHORIZED, "E004", "이메일이 일치하지 않습니다."),
+    PW_MISMATCH(HttpStatus.UNAUTHORIZED, "E005", "비밀번호가 일치하지 않습니다."),
+    NOT_FOUND(HttpStatus.NOT_FOUND, "E404", "NOT FOUND"),
 
-	UNKNOWN_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "E999", "알 수 없는 오류");
+    /* 인증 */
+    LOGIN_FAILED(HttpStatus.UNAUTHORIZED, "E101", "아이디(로그인 이메일) 또는 비밀번호가 잘못 되었습니다. 아이디와 비밀번호를 정확히 입력해 주세요."),
+    AUTHENTICATION_FAILED(HttpStatus.UNAUTHORIZED, "E102", "Authentication failed."),
+    ACCESS_DENIED(HttpStatus.FORBIDDEN, "E103", "Access Denied."),
 
-	private final HttpStatus status;
-	private final String code;
-	private final String message;
+
+    UNKNOWN_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "E999", "알 수 없는 오류");
+
+    private final HttpStatus status;
+    private final String code;
+    private final String message;
 }
