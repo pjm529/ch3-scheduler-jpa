@@ -1,7 +1,6 @@
 package com.sparta.api.member.controller;
 
 import com.sparta.api.member.dto.PasswordUpdateDto;
-import com.sparta.api.member.dto.MemberDeleteDto;
 import com.sparta.api.member.dto.MemberUpdateDto;
 import com.sparta.api.member.dto.MemberResDto;
 import com.sparta.api.member.service.MemberService;
@@ -65,10 +64,10 @@ public class MemberController {
             , CommonExceptionResultMessage.DB_FAIL
             , CommonExceptionResultMessage.FAIL
     })
-    public BaseResponse<Boolean> deleteMember(@RequestBody @Valid MemberDeleteDto dto, HttpServletRequest request) {
+    public BaseResponse<Boolean> deleteMember(HttpServletRequest request) {
         HttpSession session = request.getSession();
         MemberResDto sessionMember = (MemberResDto) session.getAttribute(SystemValues.LOGIN_USER.getValue());
-        memberService.deleteMember(dto, sessionMember.getId()); // 삭제
+        memberService.deleteMember(sessionMember.getId()); // 삭제
         session.invalidate(); // 해당 세션(데이터)을 삭제한다.
         return BaseResponse.from(true);
     }
