@@ -40,4 +40,11 @@ public class ScheduleServiceImpl implements ScheduleService {
                 .map(ScheduleResDto::new)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public ScheduleResDto findScheduleById(Long id) {
+        return scheduleRepository.findById(id)
+                .map(ScheduleResDto::new) // 일정 조회 후 mapping
+                .orElseThrow(() -> new CustomException(CommonExceptionResultMessage.NOT_FOUND, "일정 조회 실패: ID " + id + " 에 해당하는 일정 없음"));
+    }
 }
