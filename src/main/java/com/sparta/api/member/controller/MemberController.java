@@ -8,8 +8,8 @@ import com.sparta.common.annotation.ApiErrorCodeExamples;
 import com.sparta.common.component.BaseResponse;
 import com.sparta.common.component.CommonExceptionResultMessage;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -18,46 +18,44 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("/api/member")
 @CrossOrigin("*")
-@Tag(name = "Member API", description = "Member 관련 API 모음.")
+@Tag(name = "내 정보 관련 API", description = "내 정보 관련 API 모음.")
 public class MemberController {
 
     private final MemberService memberService;
 
-    @GetMapping("/{id}")
-    @Operation(summary = "회원 상세 조회 API", description = "회원 상세 조회하기 위한 API")
+    @GetMapping("/me")
+    @Operation(summary = "내 정보 조회 API")
     @ApiErrorCodeExamples({CommonExceptionResultMessage.NOT_FOUND
+            , CommonExceptionResultMessage.AUTHENTICATION_FAILED
             , CommonExceptionResultMessage.DB_FAIL
             , CommonExceptionResultMessage.FAIL
     })
-    public BaseResponse<MemberResDto> findMemberById(@Schema(description = "회원 PK") @PathVariable Long id) {
-        return BaseResponse.from(memberService.findMemberById(id));
+    public BaseResponse<MemberResDto> getMyInfo(HttpServletRequest request) {
+        return BaseResponse.from(memberService.getMyInfo(request));
     }
 
-    @PutMapping("/{id}")
-    @Operation(summary = "회원 수정 API", description = "회원 수정하기 위한 API")
+    @PutMapping("/me")
+    @Operation(summary = "회원 수정 API")
     @ApiErrorCodeExamples({CommonExceptionResultMessage.VALID_FAIL
-            , CommonExceptionResultMessage.PW_MISMATCH
+            , CommonExceptionResultMessage.AUTHENTICATION_FAILED
             , CommonExceptionResultMessage.NOT_FOUND
             , CommonExceptionResultMessage.DB_FAIL
             , CommonExceptionResultMessage.FAIL
     })
-    public BaseResponse<MemberResDto> updateMember(
-            @Schema(description = "회원 PK") @PathVariable Long id,
-            @RequestBody @Valid MemberModDto dto) {
-        return BaseResponse.from(memberService.updateMember(id, dto));
+    public BaseResponse<MemberResDto> updateMember(@RequestBody @Valid MemberModDto dto, HttpServletRequest request) {
+        return BaseResponse.from(memberService.updateMember(dto, request));
     }
 
-    @DeleteMapping("/{id}")
-    @Operation(summary = "회원 삭제 API", description = "회원 삭제하기 위한 API")
+    @DeleteMapping("/me")
+    @Operation(summary = "회원 삭제 API")
     @ApiErrorCodeExamples({CommonExceptionResultMessage.NOT_FOUND
+            , CommonExceptionResultMessage.AUTHENTICATION_FAILED
             , CommonExceptionResultMessage.VALID_FAIL
-            , CommonExceptionResultMessage.PW_MISMATCH
             , CommonExceptionResultMessage.DB_FAIL
             , CommonExceptionResultMessage.FAIL
     })
-    public BaseResponse<Boolean> deleteMember(@Schema(description = "회원 PK") @PathVariable Long id,
-                                              @RequestBody @Valid MemberDelDto dto) {
-        memberService.deleteMember(id, dto);
+    public BaseResponse<Boolean> deleteMember(@RequestBody @Valid MemberDelDto dto, HttpServletRequest request) {
+        memberService.deleteMember(dto, request);
         return BaseResponse.from(true);
     }
 }

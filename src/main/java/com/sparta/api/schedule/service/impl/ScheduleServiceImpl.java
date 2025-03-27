@@ -31,7 +31,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     @Override
     public ScheduleResDto saveSchedule(ScheduleReqDto dto, HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
+        HttpSession session = request.getSession();
         MemberResDto memberResDto = (MemberResDto) session.getAttribute(SystemValues.LOGIN_USER.getValue());
 
         Long memberId = memberResDto.getId();
@@ -81,7 +81,7 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     private Schedule validMember(Long id, HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
+        HttpSession session = request.getSession();
         MemberResDto memberResDto = (MemberResDto) session.getAttribute(SystemValues.LOGIN_USER.getValue());
 
         Long memberId = memberResDto.getId();

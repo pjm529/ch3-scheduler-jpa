@@ -3,13 +3,13 @@ package com.sparta.api.member.service;
 import com.sparta.api.member.dto.MemberDelDto;
 import com.sparta.api.member.dto.MemberModDto;
 import com.sparta.api.member.dto.MemberResDto;
+import jakarta.servlet.http.HttpServletRequest;
 
 public interface MemberService {
 
+    MemberResDto getMyInfo(HttpServletRequest request);
 
-    MemberResDto findMemberById(Long id);
+    MemberResDto updateMember(MemberModDto dto, HttpServletRequest request);
 
-    MemberResDto updateMember(Long id, MemberModDto dto);
-
-    void deleteMember(Long id, MemberDelDto dto);
+    void deleteMember(MemberDelDto dto, HttpServletRequest request);
 }
