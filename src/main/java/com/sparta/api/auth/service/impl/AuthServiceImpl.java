@@ -17,14 +17,13 @@ import java.util.Optional;
 
 @Service("authService")
 @RequiredArgsConstructor
-@Transactional
 public class AuthServiceImpl implements AuthService {
 
     private final MemberRepository memberRepository;
 
     private final PasswordEncoder passwordEncoder;
 
-
+    @Transactional(readOnly = true)
     @Override
     public MemberResDto login(LoginDto dto) {
         Member member = memberRepository.findByEmail(dto.getEmail()) // email로 Member 조회
@@ -37,6 +36,7 @@ public class AuthServiceImpl implements AuthService {
         return new MemberResDto(member); // MemberResDto 로 반환
     }
 
+    @Transactional
     @Override
     public MemberResDto signUp(MemberReqDto dto) {
         String email = dto.getEmail();

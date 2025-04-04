@@ -17,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service("memberService")
 @RequiredArgsConstructor
-@Transactional
 public class MemberServiceImpl implements MemberService {
 
     private final MemberRepository memberRepository;
@@ -25,6 +24,7 @@ public class MemberServiceImpl implements MemberService {
     private final PasswordEncoder passwordEncoder;
 
     @Override
+    @Transactional
     public MemberResDto updateMember(MemberUpdateDto dto, Long memberId) {
         Member member = this.getMember(memberId); // Member 조회
         member.update(dto.getName()); // update

@@ -25,13 +25,13 @@ import java.util.stream.Collectors;
 
 @Service("scheduleService")
 @RequiredArgsConstructor
-@Transactional
 public class ScheduleServiceImpl implements ScheduleService {
 
     private final ScheduleRepository scheduleRepository;
 
     private final MemberRepository memberRepository;
 
+    @Transactional
     @Override
     public ScheduleResDto saveSchedule(ScheduleReqDto dto, Long memberId) {
         Member member = memberRepository.findById(memberId)
@@ -47,6 +47,7 @@ public class ScheduleServiceImpl implements ScheduleService {
         return new ScheduleResDto(schedule);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public PaginationResDto<ScheduleListDto> findAllSchedule(CustomPageable customPageable) {
         Pageable pageable = customPageable.getPageable(); // page 생성
@@ -68,11 +69,13 @@ public class ScheduleServiceImpl implements ScheduleService {
                 .build();
     }
 
+    @Transactional(readOnly = true)
     @Override
     public ScheduleResDto findScheduleById(Long id) {
         return new ScheduleResDto(this.getSchedule(id));
     }
 
+    @Transactional
     @Override
     public ScheduleResDto updateSchedule(Long id, ScheduleReqDto dto, Long memberId) {
         Schedule schedule = this.validMember(id, memberId);
@@ -81,6 +84,7 @@ public class ScheduleServiceImpl implements ScheduleService {
         return new ScheduleResDto(schedule);
     }
 
+    @Transactional
     @Override
     public void deleteSchedule(Long id, Long memberId) {
         Schedule schedule = this.validMember(id, memberId);

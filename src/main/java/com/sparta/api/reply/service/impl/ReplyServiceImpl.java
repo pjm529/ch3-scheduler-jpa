@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service("replyService")
-@Transactional
 @RequiredArgsConstructor
 public class ReplyServiceImpl implements ReplyService {
 
@@ -27,6 +26,7 @@ public class ReplyServiceImpl implements ReplyService {
 
     private final ScheduleRepository scheduleRepository;
 
+    @Transactional
     @Override
     public ReplyResDto saveReply(ReplyReqDto dto, Long memberId) {
         Member member = memberRepository.findById(memberId) // Member 조회
@@ -47,11 +47,13 @@ public class ReplyServiceImpl implements ReplyService {
         return new ReplyResDto(reply);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public ReplyResDto findReplyById(Long id) {
         return new ReplyResDto(this.getReply(id));
     }
 
+    @Transactional
     @Override
     public ReplyResDto updateReply(Long id, ReplyUpdateDto dto, Long memberId) {
         Reply reply = this.validMember(id, memberId); // Reply 조회
@@ -60,6 +62,7 @@ public class ReplyServiceImpl implements ReplyService {
         return new ReplyResDto(reply);
     }
 
+    @Transactional
     @Override
     public void deleteReply(Long id, Long memberId) {
         Reply reply = this.validMember(id, memberId); // reply 조회
