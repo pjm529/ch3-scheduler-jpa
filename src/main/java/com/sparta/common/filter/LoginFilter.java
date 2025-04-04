@@ -27,7 +27,7 @@ public class LoginFilter implements Filter {
 
     // 인증을 하지 않아도 될 URL Path 배열
     private static final String[] WHITE_LIST = {"/", "/swagger-ui/**", "/api-docs", "/swagger-ui-custom.html",
-            "/v3/api-docs/**", "/api-docs/**", "/swagger-ui.html", "/api/auth/signup", "/api/auth/login", "/api/auth/logout"};
+            "/v3/api-docs/**", "/api-docs/**", "/swagger-ui.html", "/api/auth/**"};
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
