@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.sparta.common.filter.CustomFilter;
+import com.sparta.common.filter.LoggingFilter;
 import com.sparta.common.filter.LoginFilter;
 import jakarta.servlet.Filter;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -42,9 +42,9 @@ public class WebConfig implements WebMvcConfigurer {
 
 
     @Bean
-    public FilterRegistrationBean customFilter() {
+    public FilterRegistrationBean loggingFilter() {
         FilterRegistrationBean<Filter> filterRegistrationBean = new FilterRegistrationBean<>();
-        filterRegistrationBean.setFilter(new CustomFilter()); // Filter 등록
+        filterRegistrationBean.setFilter(new LoggingFilter()); // Filter 등록
         filterRegistrationBean.setOrder(1); // Filter 순서 1 설정
         filterRegistrationBean.addUrlPatterns("/*"); // 전체 URL에 Filter 적용
 

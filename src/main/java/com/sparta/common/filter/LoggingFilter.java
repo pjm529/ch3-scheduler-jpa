@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.util.Enumeration;
 
 @Slf4j
-public class CustomFilter implements Filter {
+public class LoggingFilter implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 
