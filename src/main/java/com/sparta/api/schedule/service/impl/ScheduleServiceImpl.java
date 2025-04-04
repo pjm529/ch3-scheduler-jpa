@@ -93,9 +93,6 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     private Schedule validMember(Long id, Long memberId) {
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new CustomException(CommonExceptionResultMessage.NOT_FOUND, "회원 조회 실패: ID " + memberId + " 에 해당하는 회원 없음")); // 조회 실패시 throw
-
         Schedule schedule = this.getSchedule(id); // 일정 조회
 
         if (!memberId.equals(schedule.getMember().getId())) { // 회원 검증

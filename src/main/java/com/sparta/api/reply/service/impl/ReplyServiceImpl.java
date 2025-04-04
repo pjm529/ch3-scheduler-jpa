@@ -72,8 +72,6 @@ public class ReplyServiceImpl implements ReplyService {
     }
 
     private Reply validMember(Long id, Long memberId) {
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new CustomException(CommonExceptionResultMessage.NOT_FOUND, "회원 조회 실패: ID " + memberId + " 에 해당하는 회원 없음")); // 조회 실패시 throw
 
         Reply reply = this.getReply(id);
 
